@@ -8,12 +8,22 @@
     "start": "next start"
   },
   "dependencies": {
+    "aos": "^2.3.4",
+    "bcrypt": "^6.0.0",
+    "handlebars": "^4.7.8",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.544.0",
+    "mjml": "^4.16.1",
+    "mjml-core": "^4.16.1",
+    "next": "15.5.3",
+    "nodemailer": "^7.0.6",
+    "prisma": "^6.16.2",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "next": "15.5.3"
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "daisyui": "^5.1.13",
     "tailwindcss": "^4"
   }
 }
