@@ -172,7 +172,7 @@ const Footer = () => {
                 </div>
 
                 {/* Bottom Section */}
-                <div className="border-t border-[#2B3139] bg-[#0c0219]">
+                <div className="border-t border-[#2B3139]/10 bg-[#0c0219]">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                         <div className={`flex flex-col md:flex-row justify-between items-center gap-4 transform transition-all duration-1000 ${
                             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'

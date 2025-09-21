@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import {Menu, X, Home, Shield, HelpCircle, Phone, Wallet, ChevronDown, Eclipse} from 'lucide-react';
 import Link from "next/link";
+import WalletButton from '../WalletButton';
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -59,12 +60,7 @@ const Navbar = () => {
                         {/* Connect Wallet Button & Mobile Menu Toggle */}
                         <div className="flex items-center gap-4">
                             {/* Connect Wallet Button */}
-                            <Link href="#connect" className="bg-[#F0B90B] hover:bg-[#FCD535] text-[#0c0219] px-4 md:px-6 py-2.5 rounded-full font-bold text-sm transition-colors duration-200">
-                                <div className="flex items-center gap-2">
-                                    <Wallet className="w-4 h-4" />
-                                    <span>Connect <span className="hidden md:inline">Wallet</span></span>
-                                </div>
-                            </Link>
+                            <WalletButton />
 
                             {/* Mobile Menu Button */}
                             <button
@@ -117,16 +113,9 @@ const Navbar = () => {
 
                         {/* Mobile Connect Wallet Button */}
                         <div className="p-2">
-                            <Link
-                                href="#connect"
-                                onClick={() => setIsMenuOpen(false)}
-                                className="w-full bg-[#F0B90B] hover:bg-[#FCD535] text-[#0c0219] px-6 py-3 rounded-xl font-bold text-sm transition-colors duration-200 block text-center"
-                            >
-                                <div className="flex items-center justify-center gap-2">
-                                    <Wallet className="w-4 h-4" />
-                                    <span>Connect Wallet</span>
-                                </div>
-                            </Link>
+                            <div onClick={() => setIsMenuOpen(false)}>
+                                <WalletButton />
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,89 @@
+<mjml>
+  <mj-head>
+    <mj-title>Welcome to SafeSwap</mj-title>
+    <mj-font name="Figtree" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" />
+    <mj-attributes>
+      <mj-all font-family="Figtree, Arial, sans-serif" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#0c0219">
+    <mj-section background-color="#0c0219" padding="40px 20px">
+      <mj-column>
+        <!-- Logo -->
+        <mj-image
+          src="https://safeswap.app/logo-email.png"
+          alt="SafeSwap"
+          width="120px"
+          align="center"
+          padding="0 0 30px 0"
+        />
+
+        <!-- Welcome Header -->
+        <mj-text
+          align="center"
+          color="#F0B90B"
+          font-size="32px"
+          font-weight="700"
+          padding="0 0 15px 0"
+        >
+          Welcome to SafeSwap! 🎉
+        </mj-text>
+
+        <mj-text
+          align="center"
+          color="#FFFFFF"
+          font-size="18px"
+          line-height="1.5"
+          padding="0 0 30px 0"
+        >
+          Hi {{userName}}, you've successfully joined the most secure token escrow platform
+        </mj-text>
+
+        <!-- Features -->
+        <mj-section background-color="#1A1D29" border-radius="12px" padding="30px">
+          <mj-column>
+            <mj-text color="#F0B90B" font-size="18px" font-weight="600" padding="0 0 20px 0">
+              🛡️ What you can do with SafeSwap:
+            </mj-text>
+
+            <mj-text color="#FFFFFF" font-size="14px" line-height="1.6" padding="0 0 15px 20px">
+              • Create secure escrows for token trades
+            </mj-text>
+            <mj-text color="#FFFFFF" font-size="14px" line-height="1.6" padding="0 0 15px 20px">
+              • Chat directly with trading partners
+            </mj-text>
+            <mj-text color="#FFFFFF" font-size="14px" line-height="1.6" padding="0 0 15px 20px">
+              • Enjoy built-in dispute resolution
+            </mj-text>
+            <mj-text color="#FFFFFF" font-size="14px" line-height="1.6" padding="0 0 0 20px">
+              • Pay only 1% fee on successful trades
+            </mj-text>
+          </mj-column>
+        </mj-section>
+
+        <!-- CTA Button -->
+        <mj-button
+          background-color="#F0B90B"
+          color="#0c0219"
+          font-weight="700"
+          border-radius="25px"
+          padding="30px 0"
+          href="{{dashboardUrl}}"
+        >
+          Start Trading Securely
+        </mj-button>
+
+        <!-- Footer -->
+        <mj-text
+          align="center"
+          color="#6B7280"
+          font-size="12px"
+          padding="30px 0 0 0"
+        >
+          SafeSwap - Secure Token Escrow Platform<br/>
+          Need help? Contact us at support@safeswap.app
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

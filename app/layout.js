@@ -1,11 +1,13 @@
 import "./globals.css";
-//import Providers from "./providers/Providers";
+import { Web3Provider } from "./providers/Web3Provider";
 
 export default function RootLayout({ children }) {
     return (
         <html lang="en" data-theme="light">
         <body>
-            {children}
+            <Web3Provider>
+                {children}
+            </Web3Provider>
         </body>
         </html>
     );

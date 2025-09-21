@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  walletAddress String?  @unique
+  isVerified    Boolean  @default(false)
+  name          String?
+  avatar        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  escrowsCreated    Escrow[]           @relation("Creator")
+  escrowsReceived   Escrow[]           @relation("Recipient")
+  sessions          Session[]
+  verificationCodes VerificationCode[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationCode {
+  id        String   @id @default(cuid())
+  userId    String
+  code      String
+  type      CodeType
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("verification_codes")
+}
+
+model Escrow {
+  id              String       @id @default(uuid())
+  contractAddress String? // Smart contract address
+  chainId         Int          @default(1) // Ethereum mainnet
+  tokenAddress    String // Token contract address (0x0 for ETH)
+  tokenSymbol     String // ETH, USDC, etc.
+  amount          String // Amount as string to handle large numbers
+  status          EscrowStatus @default(PENDING)
+  description     String
+  terms           String?
+
+  creatorId      String
+  recipientEmail String // Email of recipient
+  recipientId    String? // User ID when recipient registers
+
+  buyerConfirmed  Boolean @default(false)
+  sellerConfirmed Boolean @default(false)
+  disputed        Boolean @default(false)
+  disputeReason   String?
+
+  transactionHash String? // Blockchain transaction hash
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  creator   User      @relation("Creator", fields: [creatorId], references: [id])
+  recipient User?     @relation("Recipient", fields: [recipientId], references: [id])
+  messages  Message[]
+
+  @@map("escrows")
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  escrowId  String
+  senderId  String
+  content   String
+  createdAt DateTime @default(now())
+
+  escrow Escrow @relation(fields: [escrowId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+enum CodeType {
+  LOGIN
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum EscrowStatus {
+  PENDING // Created, waiting for recipient
+  ACTIVE // Both parties engaged
+  DISPUTED // Under dispute resolution
+  COMPLETED // Successfully completed
+  CANCELLED // Cancelled by creator
+  EXPIRED // Expired without completion
+}

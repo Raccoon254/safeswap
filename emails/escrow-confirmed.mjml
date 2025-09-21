@@ -1,0 +1,119 @@
+<mjml>
+  <mj-head>
+    <mj-title>Escrow Confirmation - SafeSwap</mj-title>
+    <mj-font name="Figtree" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap" />
+    <mj-attributes>
+      <mj-all font-family="Figtree, Arial, sans-serif" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#0c0219">
+    <mj-section background-color="#0c0219" padding="40px 20px">
+      <mj-column>
+        <!-- Logo -->
+        <mj-image
+          src="https://safeswap.app/logo-email.png"
+          alt="SafeSwap"
+          width="120px"
+          align="center"
+          padding="0 0 30px 0"
+        />
+
+        <!-- Header -->
+        <mj-text
+          align="center"
+          color="#F0B90B"
+          font-size="28px"
+          font-weight="700"
+          padding="0 0 10px 0"
+        >
+          {{#if isCompleted}}
+          🎉 Trade Completed!
+          {{else}}
+          ✅ Confirmation Received
+          {{/if}}
+        </mj-text>
+
+        <mj-text
+          align="center"
+          color="#B7BDC6"
+          font-size="16px"
+          line-height="1.5"
+          padding="0 0 30px 0"
+        >
+          {{#if isCompleted}}
+          Your escrow trade has been completed successfully
+          {{else}}
+          {{confirmerRole}} has confirmed the trade
+          {{/if}}
+        </mj-text>
+
+        <!-- Escrow Details -->
+        <mj-section background-color="#1A1D29" border-radius="12px" padding="30px">
+          <mj-column>
+            <mj-text color="#F0B90B" font-size="18px" font-weight="600" padding="0 0 20px 0">
+              💰 Trade Details:
+            </mj-text>
+
+            <mj-text color="#FFFFFF" font-size="16px" line-height="1.6" padding="0 0 15px 0">
+              <strong style="color: #F0B90B;">{{amount}} {{tokenSymbol}}</strong>
+            </mj-text>
+            <mj-text color="#FFFFFF" font-size="14px" line-height="1.6" padding="0 0 10px 0">
+              <strong>Description:</strong> {{description}}
+            </mj-text>
+            <mj-text color="#FFFFFF" font-size="14px" line-height="1.6" padding="0 0 0 0">
+              <strong>Escrow ID:</strong> {{escrowId}}
+            </mj-text>
+          </mj-column>
+        </mj-section>
+
+        <!-- Status Update -->
+        {{#if isCompleted}}
+        <mj-section background-color="rgba(34, 197, 94, 0.1)" border="1px solid rgba(34, 197, 94, 0.3)" border-radius="12px" padding="20px" margin="20px 0">
+          <mj-column>
+            <mj-text color="#22C55E" font-size="16px" font-weight="600" padding="0 0 10px 0">
+              🎉 Trade Complete
+            </mj-text>
+            <mj-text color="#B7BDC6" font-size="14px" line-height="1.5" padding="0">
+              Both parties have confirmed the trade. The escrow has been successfully completed and tokens will be released according to the smart contract terms.
+            </mj-text>
+          </mj-column>
+        </mj-section>
+        {{else}}
+        <mj-section background-color="rgba(234, 179, 8, 0.1)" border="1px solid rgba(234, 179, 8, 0.3)" border-radius="12px" padding="20px" margin="20px 0">
+          <mj-column>
+            <mj-text color="#EAB308" font-size="16px" font-weight="600" padding="0 0 10px 0">
+              ⏳ Waiting for {{waitingFor}}
+            </mj-text>
+            <mj-text color="#B7BDC6" font-size="14px" line-height="1.5" padding="0">
+              {{confirmerRole}} has confirmed the trade. We're now waiting for {{waitingFor}} to confirm before the trade can be completed.
+            </mj-text>
+          </mj-column>
+        </mj-section>
+        {{/if}}
+
+        <!-- CTA Button -->
+        <mj-button
+          background-color="#F0B90B"
+          color="#0c0219"
+          font-weight="700"
+          border-radius="25px"
+          padding="30px 0"
+          href="{{escrowUrl}}"
+        >
+          View Escrow Details
+        </mj-button>
+
+        <!-- Footer -->
+        <mj-text
+          align="center"
+          color="#6B7280"
+          font-size="12px"
+          padding="20px 0 0 0"
+        >
+          SafeSwap - Secure Token Escrow Platform<br/>
+          Questions? Contact us at support@safeswap.app
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
