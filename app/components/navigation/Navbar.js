@@ -62,7 +62,7 @@ const Navbar = () => {
                             <Link href="#connect" className="bg-[#F0B90B] hover:bg-[#FCD535] text-[#0c0219] px-4 md:px-6 py-2.5 rounded-full font-bold text-sm transition-colors duration-200">
                                 <div className="flex items-center gap-2">
                                     <Wallet className="w-4 h-4" />
-                                    <span>Connect Wallet</span>
+                                    <span>Connect <span className="hidden md:inline">Wallet</span></span>
                                 </div>
                             </Link>
 
@@ -90,7 +90,7 @@ const Navbar = () => {
                         ? 'max-h-96 opacity-100 pb-6'
                         : 'max-h-0 opacity-0 pb-0'
                 }`}>
-                    <div className="pt-4 space-y-2 bg-[#0c0219]/95 backdrop-blur-lg rounded-xl mt-2 border border-[#F0B90B]/20">
+                    <div className="pt-4 space-y-2 bg-[#0c0219]/95 backdrop-blur-lg rounded-[20px] mt-2 border border-[#F0B90B]/10">
                         {navItems.map((item, index) => {
                             const IconComponent = item.icon;
                             return (
@@ -116,7 +116,7 @@ const Navbar = () => {
                         })}
 
                         {/* Mobile Connect Wallet Button */}
-                        <div className="pt-4 px-4">
+                        <div className="p-2">
                             <Link
                                 href="#connect"
                                 onClick={() => setIsMenuOpen(false)}

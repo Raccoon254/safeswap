@@ -3,10 +3,11 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-body {
+body,html {
     padding: 0;
     margin: 0;
     font-family: Figtree, Helvetica, sans-serif !important;
+    background: #0c0219;
 }
 
 .pacifico {

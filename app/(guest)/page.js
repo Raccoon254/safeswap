@@ -88,9 +88,9 @@ const Landing = () => {
 
             {/* Hero Section */}
             <section id="home"
-                     className="relative p-1 py-6 md:py-40 overflow-hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                     className="relative p-1 py-12 mt-12 md:py-40 overflow-hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:py-20 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:py-20 items-center">
                         {/* Left Content */}
                         <div className={`space-y-4 transform transition-all duration-1000 ${
                             visibleSections.has('home') ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
@@ -132,13 +132,13 @@ const Landing = () => {
                             }`} style={{transitionDelay: '300ms'}}>
                             <div className="relative group">
                                 <div
-                                    className="absolute -inset-8 my-20 rounded-3xl blur-xl opacity-50 group-hover:opacity-70 transition-all duration-500"></div>
+                                    className="absolute md:-inset-8 my-20 rounded-3xl blur-xl opacity-50 group-hover:opacity-70 transition-all duration-500"></div>
                                 <Image
                                     src="/crypto_narrow.png"
                                     width={600}
                                     height={400}
                                     alt="Gaming Controller"
-                                    className="relative vignette w-full max-w-lg h-auto transform group-hover:scale-105 transition-all duration-700"
+                                    className="relative min-h-52 object-cover vignette w-full max-w-lg h-auto transform group-hover:scale-105 transition-all duration-700"
                                 />
                             </div>
                         </div>
@@ -148,7 +148,7 @@ const Landing = () => {
             </section>
 
             {/* Footer Credit Section */}
-            <section className="py-8 border-t border-b border-gray-100/10">
+            <section className="py-8 my-6 border-t border-b border-gray-100/10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <a
                         href="https://kentom.co.ke"
@@ -190,7 +190,7 @@ const Landing = () => {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
                         {/* Step 1 */}
                         <div className={`transform transition-all duration-1000 ${
                             visibleSections.has('how-it-works') ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
@@ -230,6 +230,18 @@ const Landing = () => {
                                 <h3 className="text-lg font-bold text-[#FFFFFF] mb-3">Complete Trade</h3>
                                 <p className="text-[#B7BDC6]">After both parties confirm, tokens are automatically
                                     released to the recipient.</p>
+                            </div>
+                        </div>
+
+                        <div className={`transform transition-all duration-1000 ${
+                            visibleSections.has('how-it-works') ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+                        }`} style={{transitionDelay: '400ms'}}>
+                            <div className="bg-[#0c0219] rounded-xl p-6 border border-[#2B3139] h-full">
+                                <div
+                                    className="flex items-center justify-center w-12 h-12 rounded-full bg-[#F0B90B] text-[#0c0219] font-bold text-xl mb-4">4
+                                </div>
+                                <h3 className="text-lg font-bold text-[#FFFFFF] mb-3">Repeat</h3>
+                                <p className="text-[#B7BDC6]">Start a new Escrow</p>
                             </div>
                         </div>
                     </div>
