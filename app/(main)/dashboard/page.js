@@ -16,6 +16,8 @@ const Dashboard = () => {
     disputed: 0,
     totalValue: 0
   })
+  const [walletBalance, setWalletBalance] = useState(null)
+  const [isBalanceLoading, setIsBalanceLoading] = useState(false)
   const [visibleSections, setVisibleSections] = useState(new Set())
   const router = useRouter()
 
@@ -61,6 +63,9 @@ const Dashboard = () => {
 
       const data = await response.json()
       setUser(data.user)
+      if (data.user.walletAddress) {
+        fetchWalletBalance(data.user.walletAddress)
+      }
 
       // Fetch escrows
       await fetchEscrows()
@@ -69,6 +74,32 @@ const Dashboard = () => {
       router.push('/login')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fetchWalletBalance = async (walletAddress) => {
+    if (!walletAddress) return
+    setIsBalanceLoading(true)
+    try {
+      const response = await fetch('/api/wallet/balance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          walletAddress,
+          tokenAddress: '0x0000000000000000000000000000000000000000' // ETH
+        })
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setWalletBalance(data)
+      } else {
+        setWalletBalance(null)
+      }
+    } catch (error) {
+      console.error('Failed to fetch wallet balance:', error)
+      setWalletBalance(null)
+    } finally {
+      setIsBalanceLoading(false)
     }
   }
 
@@ -198,12 +229,33 @@ const Dashboard = () => {
       {/* Stats Section */}
       <section id="stats" className="py-16 bg-[#0c0219]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div
+                className={`bg-gray-900/20 border border-[#2B3139]/10 rounded-xl p-6 transform transition-all duration-1000 hover:scale-105 hover:border-[#F0B90B]/30 ${
+                    visibleSections.has('stats') ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-100'
+                }`}
+                style={{ transitionDelay: '0ms' }}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[#B7BDC6] text-sm">Linked Wallet (ETH)</p>
+                  {isBalanceLoading ? (
+                      <div className="w-6 h-6 border-2 border-gray-500 border-t-white rounded-full animate-spin mt-2"></div>
+                  ) : walletBalance ? (
+                      <p className="text-2xl font-bold text-white mt-1">{walletBalance.balance} ETH</p>
+                  ) : (
+                      <p className="text-sm text-gray-400 mt-1">Not available</p>
+                  )}
+                </div>
+                <button onClick={() => fetchWalletBalance(user.walletAddress)} disabled={isBalanceLoading} className="text-gray-400 hover:text-white transition">
+                  <Wallet className={`w-8 h-8 text-[#F0B90B]`} />
+                </button>
+              </div>
+            </div>
             {[
-              { label: 'Total Escrows', value: stats.total.toString(), icon: Shield, color: 'text-[#F0B90B]', delay: '0ms' },
-              { label: 'Active', value: stats.active.toString(), icon: Clock, color: 'text-blue-500', delay: '100ms' },
-              { label: 'Completed', value: stats.completed.toString(), icon: CheckCircle, color: 'text-green-500', delay: '200ms' },
-              { label: 'Total Value', value: formatValue(stats.totalValue), icon: null, color: 'text-[#F0B90B]', delay: '300ms' }
+              { label: 'Total Escrows', value: stats.total.toString(), icon: Shield, color: 'text-[#F0B90B]', delay: '100ms' },
+              { label: 'Active', value: stats.active.toString(), icon: Clock, color: 'text-blue-500', delay: '200ms' },
+              { label: 'Completed', value: stats.completed.toString(), icon: CheckCircle, color: 'text-green-500', delay: '300ms' },
             ].map((stat, index) => {
               const IconComponent = stat.icon
               return (
