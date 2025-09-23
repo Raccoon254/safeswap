@@ -1262,6 +1262,7 @@ export namespace Prisma {
     escrowsReceived: number
     sessions: number
     verificationCodes: number
+    messages: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1269,6 +1270,7 @@ export namespace Prisma {
     escrowsReceived?: boolean | UserCountOutputTypeCountEscrowsReceivedArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     verificationCodes?: boolean | UserCountOutputTypeCountVerificationCodesArgs
+    messages?: boolean | UserCountOutputTypeCountMessagesArgs
   }
 
   // Custom InputTypes
@@ -1308,6 +1310,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountVerificationCodesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: VerificationCodeWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MessageWhereInput
   }
 
 
@@ -1538,6 +1547,7 @@ export namespace Prisma {
     escrowsReceived?: boolean | User$escrowsReceivedArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     verificationCodes?: boolean | User$verificationCodesArgs<ExtArgs>
+    messages?: boolean | User$messagesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1580,6 +1590,7 @@ export namespace Prisma {
     escrowsReceived?: boolean | User$escrowsReceivedArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     verificationCodes?: boolean | User$verificationCodesArgs<ExtArgs>
+    messages?: boolean | User$messagesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1592,6 +1603,7 @@ export namespace Prisma {
       escrowsReceived: Prisma.$EscrowPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       verificationCodes: Prisma.$VerificationCodePayload<ExtArgs>[]
+      messages: Prisma.$MessagePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2000,6 +2012,7 @@ export namespace Prisma {
     escrowsReceived<T extends User$escrowsReceivedArgs<ExtArgs> = {}>(args?: Subset<T, User$escrowsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EscrowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     verificationCodes<T extends User$verificationCodesArgs<ExtArgs> = {}>(args?: Subset<T, User$verificationCodesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VerificationCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    messages<T extends User$messagesArgs<ExtArgs> = {}>(args?: Subset<T, User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2518,6 +2531,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: VerificationCodeScalarFieldEnum | VerificationCodeScalarFieldEnum[]
+  }
+
+  /**
+   * User.messages
+   */
+  export type User$messagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Message
+     */
+    select?: MessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Message
+     */
+    omit?: MessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageInclude<ExtArgs> | null
+    where?: MessageWhereInput
+    orderBy?: MessageOrderByWithRelationInput | MessageOrderByWithRelationInput[]
+    cursor?: MessageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MessageScalarFieldEnum | MessageScalarFieldEnum[]
   }
 
   /**
@@ -4712,8 +4749,10 @@ export namespace Prisma {
     description: string | null
     terms: string | null
     creatorId: string | null
+    creatorWallet: string | null
     recipientEmail: string | null
     recipientId: string | null
+    recipientWallet: string | null
     buyerConfirmed: boolean | null
     sellerConfirmed: boolean | null
     disputed: boolean | null
@@ -4735,8 +4774,10 @@ export namespace Prisma {
     description: string | null
     terms: string | null
     creatorId: string | null
+    creatorWallet: string | null
     recipientEmail: string | null
     recipientId: string | null
+    recipientWallet: string | null
     buyerConfirmed: boolean | null
     sellerConfirmed: boolean | null
     disputed: boolean | null
@@ -4758,8 +4799,10 @@ export namespace Prisma {
     description: number
     terms: number
     creatorId: number
+    creatorWallet: number
     recipientEmail: number
     recipientId: number
+    recipientWallet: number
     buyerConfirmed: number
     sellerConfirmed: number
     disputed: number
@@ -4791,8 +4834,10 @@ export namespace Prisma {
     description?: true
     terms?: true
     creatorId?: true
+    creatorWallet?: true
     recipientEmail?: true
     recipientId?: true
+    recipientWallet?: true
     buyerConfirmed?: true
     sellerConfirmed?: true
     disputed?: true
@@ -4814,8 +4859,10 @@ export namespace Prisma {
     description?: true
     terms?: true
     creatorId?: true
+    creatorWallet?: true
     recipientEmail?: true
     recipientId?: true
+    recipientWallet?: true
     buyerConfirmed?: true
     sellerConfirmed?: true
     disputed?: true
@@ -4837,8 +4884,10 @@ export namespace Prisma {
     description?: true
     terms?: true
     creatorId?: true
+    creatorWallet?: true
     recipientEmail?: true
     recipientId?: true
+    recipientWallet?: true
     buyerConfirmed?: true
     sellerConfirmed?: true
     disputed?: true
@@ -4947,8 +4996,10 @@ export namespace Prisma {
     description: string
     terms: string | null
     creatorId: string
+    creatorWallet: string | null
     recipientEmail: string
     recipientId: string | null
+    recipientWallet: string | null
     buyerConfirmed: boolean
     sellerConfirmed: boolean
     disputed: boolean
@@ -4989,8 +5040,10 @@ export namespace Prisma {
     description?: boolean
     terms?: boolean
     creatorId?: boolean
+    creatorWallet?: boolean
     recipientEmail?: boolean
     recipientId?: boolean
+    recipientWallet?: boolean
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -5016,8 +5069,10 @@ export namespace Prisma {
     description?: boolean
     terms?: boolean
     creatorId?: boolean
+    creatorWallet?: boolean
     recipientEmail?: boolean
     recipientId?: boolean
+    recipientWallet?: boolean
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -5041,8 +5096,10 @@ export namespace Prisma {
     description?: boolean
     terms?: boolean
     creatorId?: boolean
+    creatorWallet?: boolean
     recipientEmail?: boolean
     recipientId?: boolean
+    recipientWallet?: boolean
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -5066,8 +5123,10 @@ export namespace Prisma {
     description?: boolean
     terms?: boolean
     creatorId?: boolean
+    creatorWallet?: boolean
     recipientEmail?: boolean
     recipientId?: boolean
+    recipientWallet?: boolean
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -5078,7 +5137,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type EscrowOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "contractAddress" | "chainId" | "tokenAddress" | "tokenSymbol" | "amount" | "status" | "description" | "terms" | "creatorId" | "recipientEmail" | "recipientId" | "buyerConfirmed" | "sellerConfirmed" | "disputed" | "disputeReason" | "transactionHash" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["escrow"]>
+  export type EscrowOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "contractAddress" | "chainId" | "tokenAddress" | "tokenSymbol" | "amount" | "status" | "description" | "terms" | "creatorId" | "creatorWallet" | "recipientEmail" | "recipientId" | "recipientWallet" | "buyerConfirmed" | "sellerConfirmed" | "disputed" | "disputeReason" | "transactionHash" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["escrow"]>
   export type EscrowInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | UserDefaultArgs<ExtArgs>
     recipient?: boolean | Escrow$recipientArgs<ExtArgs>
@@ -5112,8 +5171,10 @@ export namespace Prisma {
       description: string
       terms: string | null
       creatorId: string
+      creatorWallet: string | null
       recipientEmail: string
       recipientId: string | null
+      recipientWallet: string | null
       buyerConfirmed: boolean
       sellerConfirmed: boolean
       disputed: boolean
@@ -5558,8 +5619,10 @@ export namespace Prisma {
     readonly description: FieldRef<"Escrow", 'String'>
     readonly terms: FieldRef<"Escrow", 'String'>
     readonly creatorId: FieldRef<"Escrow", 'String'>
+    readonly creatorWallet: FieldRef<"Escrow", 'String'>
     readonly recipientEmail: FieldRef<"Escrow", 'String'>
     readonly recipientId: FieldRef<"Escrow", 'String'>
+    readonly recipientWallet: FieldRef<"Escrow", 'String'>
     readonly buyerConfirmed: FieldRef<"Escrow", 'Boolean'>
     readonly sellerConfirmed: FieldRef<"Escrow", 'Boolean'>
     readonly disputed: FieldRef<"Escrow", 'Boolean'>
@@ -6190,6 +6253,7 @@ export namespace Prisma {
     content?: boolean
     createdAt?: boolean
     escrow?: boolean | EscrowDefaultArgs<ExtArgs>
+    sender?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
 
   export type MessageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6199,6 +6263,7 @@ export namespace Prisma {
     content?: boolean
     createdAt?: boolean
     escrow?: boolean | EscrowDefaultArgs<ExtArgs>
+    sender?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
 
   export type MessageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6208,6 +6273,7 @@ export namespace Prisma {
     content?: boolean
     createdAt?: boolean
     escrow?: boolean | EscrowDefaultArgs<ExtArgs>
+    sender?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
 
   export type MessageSelectScalar = {
@@ -6221,18 +6287,22 @@ export namespace Prisma {
   export type MessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "escrowId" | "senderId" | "content" | "createdAt", ExtArgs["result"]["message"]>
   export type MessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     escrow?: boolean | EscrowDefaultArgs<ExtArgs>
+    sender?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type MessageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     escrow?: boolean | EscrowDefaultArgs<ExtArgs>
+    sender?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type MessageIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     escrow?: boolean | EscrowDefaultArgs<ExtArgs>
+    sender?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $MessagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Message"
     objects: {
       escrow: Prisma.$EscrowPayload<ExtArgs>
+      sender: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6635,6 +6705,7 @@ export namespace Prisma {
   export interface Prisma__MessageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     escrow<T extends EscrowDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EscrowDefaultArgs<ExtArgs>>): Prisma__EscrowClient<$Result.GetResult<Prisma.$EscrowPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    sender<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7146,8 +7217,10 @@ export namespace Prisma {
     description: 'description',
     terms: 'terms',
     creatorId: 'creatorId',
+    creatorWallet: 'creatorWallet',
     recipientEmail: 'recipientEmail',
     recipientId: 'recipientId',
+    recipientWallet: 'recipientWallet',
     buyerConfirmed: 'buyerConfirmed',
     sellerConfirmed: 'sellerConfirmed',
     disputed: 'disputed',
@@ -7311,6 +7384,7 @@ export namespace Prisma {
     escrowsReceived?: EscrowListRelationFilter
     sessions?: SessionListRelationFilter
     verificationCodes?: VerificationCodeListRelationFilter
+    messages?: MessageListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -7326,6 +7400,7 @@ export namespace Prisma {
     escrowsReceived?: EscrowOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     verificationCodes?: VerificationCodeOrderByRelationAggregateInput
+    messages?: MessageOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -7344,6 +7419,7 @@ export namespace Prisma {
     escrowsReceived?: EscrowListRelationFilter
     sessions?: SessionListRelationFilter
     verificationCodes?: VerificationCodeListRelationFilter
+    messages?: MessageListRelationFilter
   }, "id" | "email" | "walletAddress">
 
   export type UserOrderByWithAggregationInput = {
@@ -7508,8 +7584,10 @@ export namespace Prisma {
     description?: StringFilter<"Escrow"> | string
     terms?: StringNullableFilter<"Escrow"> | string | null
     creatorId?: StringFilter<"Escrow"> | string
+    creatorWallet?: StringNullableFilter<"Escrow"> | string | null
     recipientEmail?: StringFilter<"Escrow"> | string
     recipientId?: StringNullableFilter<"Escrow"> | string | null
+    recipientWallet?: StringNullableFilter<"Escrow"> | string | null
     buyerConfirmed?: BoolFilter<"Escrow"> | boolean
     sellerConfirmed?: BoolFilter<"Escrow"> | boolean
     disputed?: BoolFilter<"Escrow"> | boolean
@@ -7534,8 +7612,10 @@ export namespace Prisma {
     description?: SortOrder
     terms?: SortOrderInput | SortOrder
     creatorId?: SortOrder
+    creatorWallet?: SortOrderInput | SortOrder
     recipientEmail?: SortOrder
     recipientId?: SortOrderInput | SortOrder
+    recipientWallet?: SortOrderInput | SortOrder
     buyerConfirmed?: SortOrder
     sellerConfirmed?: SortOrder
     disputed?: SortOrder
@@ -7563,8 +7643,10 @@ export namespace Prisma {
     description?: StringFilter<"Escrow"> | string
     terms?: StringNullableFilter<"Escrow"> | string | null
     creatorId?: StringFilter<"Escrow"> | string
+    creatorWallet?: StringNullableFilter<"Escrow"> | string | null
     recipientEmail?: StringFilter<"Escrow"> | string
     recipientId?: StringNullableFilter<"Escrow"> | string | null
+    recipientWallet?: StringNullableFilter<"Escrow"> | string | null
     buyerConfirmed?: BoolFilter<"Escrow"> | boolean
     sellerConfirmed?: BoolFilter<"Escrow"> | boolean
     disputed?: BoolFilter<"Escrow"> | boolean
@@ -7589,8 +7671,10 @@ export namespace Prisma {
     description?: SortOrder
     terms?: SortOrderInput | SortOrder
     creatorId?: SortOrder
+    creatorWallet?: SortOrderInput | SortOrder
     recipientEmail?: SortOrder
     recipientId?: SortOrderInput | SortOrder
+    recipientWallet?: SortOrderInput | SortOrder
     buyerConfirmed?: SortOrder
     sellerConfirmed?: SortOrder
     disputed?: SortOrder
@@ -7620,8 +7704,10 @@ export namespace Prisma {
     description?: StringWithAggregatesFilter<"Escrow"> | string
     terms?: StringNullableWithAggregatesFilter<"Escrow"> | string | null
     creatorId?: StringWithAggregatesFilter<"Escrow"> | string
+    creatorWallet?: StringNullableWithAggregatesFilter<"Escrow"> | string | null
     recipientEmail?: StringWithAggregatesFilter<"Escrow"> | string
     recipientId?: StringNullableWithAggregatesFilter<"Escrow"> | string | null
+    recipientWallet?: StringNullableWithAggregatesFilter<"Escrow"> | string | null
     buyerConfirmed?: BoolWithAggregatesFilter<"Escrow"> | boolean
     sellerConfirmed?: BoolWithAggregatesFilter<"Escrow"> | boolean
     disputed?: BoolWithAggregatesFilter<"Escrow"> | boolean
@@ -7642,6 +7728,7 @@ export namespace Prisma {
     content?: StringFilter<"Message"> | string
     createdAt?: DateTimeFilter<"Message"> | Date | string
     escrow?: XOR<EscrowScalarRelationFilter, EscrowWhereInput>
+    sender?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type MessageOrderByWithRelationInput = {
@@ -7651,6 +7738,7 @@ export namespace Prisma {
     content?: SortOrder
     createdAt?: SortOrder
     escrow?: EscrowOrderByWithRelationInput
+    sender?: UserOrderByWithRelationInput
   }
 
   export type MessageWhereUniqueInput = Prisma.AtLeast<{
@@ -7663,6 +7751,7 @@ export namespace Prisma {
     content?: StringFilter<"Message"> | string
     createdAt?: DateTimeFilter<"Message"> | Date | string
     escrow?: XOR<EscrowScalarRelationFilter, EscrowWhereInput>
+    sender?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type MessageOrderByWithAggregationInput = {
@@ -7700,6 +7789,7 @@ export namespace Prisma {
     escrowsReceived?: EscrowCreateNestedManyWithoutRecipientInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     verificationCodes?: VerificationCodeCreateNestedManyWithoutUserInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -7715,6 +7805,7 @@ export namespace Prisma {
     escrowsReceived?: EscrowUncheckedCreateNestedManyWithoutRecipientInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     verificationCodes?: VerificationCodeUncheckedCreateNestedManyWithoutUserInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
   }
 
   export type UserUpdateInput = {
@@ -7730,6 +7821,7 @@ export namespace Prisma {
     escrowsReceived?: EscrowUpdateManyWithoutRecipientNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     verificationCodes?: VerificationCodeUpdateManyWithoutUserNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -7745,6 +7837,7 @@ export namespace Prisma {
     escrowsReceived?: EscrowUncheckedUpdateManyWithoutRecipientNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     verificationCodes?: VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -7914,7 +8007,9 @@ export namespace Prisma {
     status?: $Enums.EscrowStatus
     description: string
     terms?: string | null
+    creatorWallet?: string | null
     recipientEmail: string
+    recipientWallet?: string | null
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -7939,8 +8034,10 @@ export namespace Prisma {
     description: string
     terms?: string | null
     creatorId: string
+    creatorWallet?: string | null
     recipientEmail: string
     recipientId?: string | null
+    recipientWallet?: string | null
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -7962,7 +8059,9 @@ export namespace Prisma {
     status?: EnumEscrowStatusFieldUpdateOperationsInput | $Enums.EscrowStatus
     description?: StringFieldUpdateOperationsInput | string
     terms?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorWallet?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: StringFieldUpdateOperationsInput | string
+    recipientWallet?: NullableStringFieldUpdateOperationsInput | string | null
     buyerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     sellerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     disputed?: BoolFieldUpdateOperationsInput | boolean
@@ -7987,8 +8086,10 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     terms?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
+    creatorWallet?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: StringFieldUpdateOperationsInput | string
     recipientId?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientWallet?: NullableStringFieldUpdateOperationsInput | string | null
     buyerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     sellerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     disputed?: BoolFieldUpdateOperationsInput | boolean
@@ -8011,8 +8112,10 @@ export namespace Prisma {
     description: string
     terms?: string | null
     creatorId: string
+    creatorWallet?: string | null
     recipientEmail: string
     recipientId?: string | null
+    recipientWallet?: string | null
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -8033,7 +8136,9 @@ export namespace Prisma {
     status?: EnumEscrowStatusFieldUpdateOperationsInput | $Enums.EscrowStatus
     description?: StringFieldUpdateOperationsInput | string
     terms?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorWallet?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: StringFieldUpdateOperationsInput | string
+    recipientWallet?: NullableStringFieldUpdateOperationsInput | string | null
     buyerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     sellerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     disputed?: BoolFieldUpdateOperationsInput | boolean
@@ -8055,8 +8160,10 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     terms?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
+    creatorWallet?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: StringFieldUpdateOperationsInput | string
     recipientId?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientWallet?: NullableStringFieldUpdateOperationsInput | string | null
     buyerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     sellerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     disputed?: BoolFieldUpdateOperationsInput | boolean
@@ -8069,10 +8176,10 @@ export namespace Prisma {
 
   export type MessageCreateInput = {
     id?: string
-    senderId: string
     content: string
     createdAt?: Date | string
     escrow: EscrowCreateNestedOneWithoutMessagesInput
+    sender: UserCreateNestedOneWithoutMessagesInput
   }
 
   export type MessageUncheckedCreateInput = {
@@ -8085,10 +8192,10 @@ export namespace Prisma {
 
   export type MessageUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    senderId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     escrow?: EscrowUpdateOneRequiredWithoutMessagesNestedInput
+    sender?: UserUpdateOneRequiredWithoutMessagesNestedInput
   }
 
   export type MessageUncheckedUpdateInput = {
@@ -8109,7 +8216,6 @@ export namespace Prisma {
 
   export type MessageUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    senderId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8186,6 +8292,12 @@ export namespace Prisma {
     none?: VerificationCodeWhereInput
   }
 
+  export type MessageListRelationFilter = {
+    every?: MessageWhereInput
+    some?: MessageWhereInput
+    none?: MessageWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -8200,6 +8312,10 @@ export namespace Prisma {
   }
 
   export type VerificationCodeOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type MessageOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -8404,16 +8520,6 @@ export namespace Prisma {
     isNot?: UserWhereInput | null
   }
 
-  export type MessageListRelationFilter = {
-    every?: MessageWhereInput
-    some?: MessageWhereInput
-    none?: MessageWhereInput
-  }
-
-  export type MessageOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type EscrowCountOrderByAggregateInput = {
     id?: SortOrder
     contractAddress?: SortOrder
@@ -8425,8 +8531,10 @@ export namespace Prisma {
     description?: SortOrder
     terms?: SortOrder
     creatorId?: SortOrder
+    creatorWallet?: SortOrder
     recipientEmail?: SortOrder
     recipientId?: SortOrder
+    recipientWallet?: SortOrder
     buyerConfirmed?: SortOrder
     sellerConfirmed?: SortOrder
     disputed?: SortOrder
@@ -8452,8 +8560,10 @@ export namespace Prisma {
     description?: SortOrder
     terms?: SortOrder
     creatorId?: SortOrder
+    creatorWallet?: SortOrder
     recipientEmail?: SortOrder
     recipientId?: SortOrder
+    recipientWallet?: SortOrder
     buyerConfirmed?: SortOrder
     sellerConfirmed?: SortOrder
     disputed?: SortOrder
@@ -8475,8 +8585,10 @@ export namespace Prisma {
     description?: SortOrder
     terms?: SortOrder
     creatorId?: SortOrder
+    creatorWallet?: SortOrder
     recipientEmail?: SortOrder
     recipientId?: SortOrder
+    recipientWallet?: SortOrder
     buyerConfirmed?: SortOrder
     sellerConfirmed?: SortOrder
     disputed?: SortOrder
@@ -8588,6 +8700,13 @@ export namespace Prisma {
     connect?: VerificationCodeWhereUniqueInput | VerificationCodeWhereUniqueInput[]
   }
 
+  export type MessageCreateNestedManyWithoutSenderInput = {
+    create?: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput> | MessageCreateWithoutSenderInput[] | MessageUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutSenderInput | MessageCreateOrConnectWithoutSenderInput[]
+    createMany?: MessageCreateManySenderInputEnvelope
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+  }
+
   export type EscrowUncheckedCreateNestedManyWithoutCreatorInput = {
     create?: XOR<EscrowCreateWithoutCreatorInput, EscrowUncheckedCreateWithoutCreatorInput> | EscrowCreateWithoutCreatorInput[] | EscrowUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: EscrowCreateOrConnectWithoutCreatorInput | EscrowCreateOrConnectWithoutCreatorInput[]
@@ -8614,6 +8733,13 @@ export namespace Prisma {
     connectOrCreate?: VerificationCodeCreateOrConnectWithoutUserInput | VerificationCodeCreateOrConnectWithoutUserInput[]
     createMany?: VerificationCodeCreateManyUserInputEnvelope
     connect?: VerificationCodeWhereUniqueInput | VerificationCodeWhereUniqueInput[]
+  }
+
+  export type MessageUncheckedCreateNestedManyWithoutSenderInput = {
+    create?: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput> | MessageCreateWithoutSenderInput[] | MessageUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutSenderInput | MessageCreateOrConnectWithoutSenderInput[]
+    createMany?: MessageCreateManySenderInputEnvelope
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -8688,6 +8814,20 @@ export namespace Prisma {
     deleteMany?: VerificationCodeScalarWhereInput | VerificationCodeScalarWhereInput[]
   }
 
+  export type MessageUpdateManyWithoutSenderNestedInput = {
+    create?: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput> | MessageCreateWithoutSenderInput[] | MessageUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutSenderInput | MessageCreateOrConnectWithoutSenderInput[]
+    upsert?: MessageUpsertWithWhereUniqueWithoutSenderInput | MessageUpsertWithWhereUniqueWithoutSenderInput[]
+    createMany?: MessageCreateManySenderInputEnvelope
+    set?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    disconnect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    delete?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    update?: MessageUpdateWithWhereUniqueWithoutSenderInput | MessageUpdateWithWhereUniqueWithoutSenderInput[]
+    updateMany?: MessageUpdateManyWithWhereWithoutSenderInput | MessageUpdateManyWithWhereWithoutSenderInput[]
+    deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
+  }
+
   export type EscrowUncheckedUpdateManyWithoutCreatorNestedInput = {
     create?: XOR<EscrowCreateWithoutCreatorInput, EscrowUncheckedCreateWithoutCreatorInput> | EscrowCreateWithoutCreatorInput[] | EscrowUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: EscrowCreateOrConnectWithoutCreatorInput | EscrowCreateOrConnectWithoutCreatorInput[]
@@ -8742,6 +8882,20 @@ export namespace Prisma {
     update?: VerificationCodeUpdateWithWhereUniqueWithoutUserInput | VerificationCodeUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: VerificationCodeUpdateManyWithWhereWithoutUserInput | VerificationCodeUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: VerificationCodeScalarWhereInput | VerificationCodeScalarWhereInput[]
+  }
+
+  export type MessageUncheckedUpdateManyWithoutSenderNestedInput = {
+    create?: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput> | MessageCreateWithoutSenderInput[] | MessageUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutSenderInput | MessageCreateOrConnectWithoutSenderInput[]
+    upsert?: MessageUpsertWithWhereUniqueWithoutSenderInput | MessageUpsertWithWhereUniqueWithoutSenderInput[]
+    createMany?: MessageCreateManySenderInputEnvelope
+    set?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    disconnect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    delete?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    update?: MessageUpdateWithWhereUniqueWithoutSenderInput | MessageUpdateWithWhereUniqueWithoutSenderInput[]
+    updateMany?: MessageUpdateManyWithWhereWithoutSenderInput | MessageUpdateManyWithWhereWithoutSenderInput[]
+    deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSessionsInput = {
@@ -8870,12 +9024,26 @@ export namespace Prisma {
     connect?: EscrowWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutMessagesInput = {
+    create?: XOR<UserCreateWithoutMessagesInput, UserUncheckedCreateWithoutMessagesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMessagesInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type EscrowUpdateOneRequiredWithoutMessagesNestedInput = {
     create?: XOR<EscrowCreateWithoutMessagesInput, EscrowUncheckedCreateWithoutMessagesInput>
     connectOrCreate?: EscrowCreateOrConnectWithoutMessagesInput
     upsert?: EscrowUpsertWithoutMessagesInput
     connect?: EscrowWhereUniqueInput
     update?: XOR<XOR<EscrowUpdateToOneWithWhereWithoutMessagesInput, EscrowUpdateWithoutMessagesInput>, EscrowUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutMessagesNestedInput = {
+    create?: XOR<UserCreateWithoutMessagesInput, UserUncheckedCreateWithoutMessagesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMessagesInput
+    upsert?: UserUpsertWithoutMessagesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMessagesInput, UserUpdateWithoutMessagesInput>, UserUncheckedUpdateWithoutMessagesInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -9096,7 +9264,9 @@ export namespace Prisma {
     status?: $Enums.EscrowStatus
     description: string
     terms?: string | null
+    creatorWallet?: string | null
     recipientEmail: string
+    recipientWallet?: string | null
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -9119,8 +9289,10 @@ export namespace Prisma {
     status?: $Enums.EscrowStatus
     description: string
     terms?: string | null
+    creatorWallet?: string | null
     recipientEmail: string
     recipientId?: string | null
+    recipientWallet?: string | null
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -9152,7 +9324,9 @@ export namespace Prisma {
     status?: $Enums.EscrowStatus
     description: string
     terms?: string | null
+    creatorWallet?: string | null
     recipientEmail: string
+    recipientWallet?: string | null
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -9176,7 +9350,9 @@ export namespace Prisma {
     description: string
     terms?: string | null
     creatorId: string
+    creatorWallet?: string | null
     recipientEmail: string
+    recipientWallet?: string | null
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -9250,6 +9426,30 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type MessageCreateWithoutSenderInput = {
+    id?: string
+    content: string
+    createdAt?: Date | string
+    escrow: EscrowCreateNestedOneWithoutMessagesInput
+  }
+
+  export type MessageUncheckedCreateWithoutSenderInput = {
+    id?: string
+    escrowId: string
+    content: string
+    createdAt?: Date | string
+  }
+
+  export type MessageCreateOrConnectWithoutSenderInput = {
+    where: MessageWhereUniqueInput
+    create: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput>
+  }
+
+  export type MessageCreateManySenderInputEnvelope = {
+    data: MessageCreateManySenderInput | MessageCreateManySenderInput[]
+    skipDuplicates?: boolean
+  }
+
   export type EscrowUpsertWithWhereUniqueWithoutCreatorInput = {
     where: EscrowWhereUniqueInput
     update: XOR<EscrowUpdateWithoutCreatorInput, EscrowUncheckedUpdateWithoutCreatorInput>
@@ -9280,8 +9480,10 @@ export namespace Prisma {
     description?: StringFilter<"Escrow"> | string
     terms?: StringNullableFilter<"Escrow"> | string | null
     creatorId?: StringFilter<"Escrow"> | string
+    creatorWallet?: StringNullableFilter<"Escrow"> | string | null
     recipientEmail?: StringFilter<"Escrow"> | string
     recipientId?: StringNullableFilter<"Escrow"> | string | null
+    recipientWallet?: StringNullableFilter<"Escrow"> | string | null
     buyerConfirmed?: BoolFilter<"Escrow"> | boolean
     sellerConfirmed?: BoolFilter<"Escrow"> | boolean
     disputed?: BoolFilter<"Escrow"> | boolean
@@ -9364,6 +9566,33 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"VerificationCode"> | Date | string
   }
 
+  export type MessageUpsertWithWhereUniqueWithoutSenderInput = {
+    where: MessageWhereUniqueInput
+    update: XOR<MessageUpdateWithoutSenderInput, MessageUncheckedUpdateWithoutSenderInput>
+    create: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput>
+  }
+
+  export type MessageUpdateWithWhereUniqueWithoutSenderInput = {
+    where: MessageWhereUniqueInput
+    data: XOR<MessageUpdateWithoutSenderInput, MessageUncheckedUpdateWithoutSenderInput>
+  }
+
+  export type MessageUpdateManyWithWhereWithoutSenderInput = {
+    where: MessageScalarWhereInput
+    data: XOR<MessageUpdateManyMutationInput, MessageUncheckedUpdateManyWithoutSenderInput>
+  }
+
+  export type MessageScalarWhereInput = {
+    AND?: MessageScalarWhereInput | MessageScalarWhereInput[]
+    OR?: MessageScalarWhereInput[]
+    NOT?: MessageScalarWhereInput | MessageScalarWhereInput[]
+    id?: StringFilter<"Message"> | string
+    escrowId?: StringFilter<"Message"> | string
+    senderId?: StringFilter<"Message"> | string
+    content?: StringFilter<"Message"> | string
+    createdAt?: DateTimeFilter<"Message"> | Date | string
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id?: string
     email: string
@@ -9376,6 +9605,7 @@ export namespace Prisma {
     escrowsCreated?: EscrowCreateNestedManyWithoutCreatorInput
     escrowsReceived?: EscrowCreateNestedManyWithoutRecipientInput
     verificationCodes?: VerificationCodeCreateNestedManyWithoutUserInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -9390,6 +9620,7 @@ export namespace Prisma {
     escrowsCreated?: EscrowUncheckedCreateNestedManyWithoutCreatorInput
     escrowsReceived?: EscrowUncheckedCreateNestedManyWithoutRecipientInput
     verificationCodes?: VerificationCodeUncheckedCreateNestedManyWithoutUserInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -9420,6 +9651,7 @@ export namespace Prisma {
     escrowsCreated?: EscrowUpdateManyWithoutCreatorNestedInput
     escrowsReceived?: EscrowUpdateManyWithoutRecipientNestedInput
     verificationCodes?: VerificationCodeUpdateManyWithoutUserNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -9434,6 +9666,7 @@ export namespace Prisma {
     escrowsCreated?: EscrowUncheckedUpdateManyWithoutCreatorNestedInput
     escrowsReceived?: EscrowUncheckedUpdateManyWithoutRecipientNestedInput
     verificationCodes?: VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
   }
 
   export type UserCreateWithoutVerificationCodesInput = {
@@ -9448,6 +9681,7 @@ export namespace Prisma {
     escrowsCreated?: EscrowCreateNestedManyWithoutCreatorInput
     escrowsReceived?: EscrowCreateNestedManyWithoutRecipientInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
   }
 
   export type UserUncheckedCreateWithoutVerificationCodesInput = {
@@ -9462,6 +9696,7 @@ export namespace Prisma {
     escrowsCreated?: EscrowUncheckedCreateNestedManyWithoutCreatorInput
     escrowsReceived?: EscrowUncheckedCreateNestedManyWithoutRecipientInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
   }
 
   export type UserCreateOrConnectWithoutVerificationCodesInput = {
@@ -9492,6 +9727,7 @@ export namespace Prisma {
     escrowsCreated?: EscrowUpdateManyWithoutCreatorNestedInput
     escrowsReceived?: EscrowUpdateManyWithoutRecipientNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVerificationCodesInput = {
@@ -9506,6 +9742,7 @@ export namespace Prisma {
     escrowsCreated?: EscrowUncheckedUpdateManyWithoutCreatorNestedInput
     escrowsReceived?: EscrowUncheckedUpdateManyWithoutRecipientNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
   }
 
   export type UserCreateWithoutEscrowsCreatedInput = {
@@ -9520,6 +9757,7 @@ export namespace Prisma {
     escrowsReceived?: EscrowCreateNestedManyWithoutRecipientInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     verificationCodes?: VerificationCodeCreateNestedManyWithoutUserInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
   }
 
   export type UserUncheckedCreateWithoutEscrowsCreatedInput = {
@@ -9534,6 +9772,7 @@ export namespace Prisma {
     escrowsReceived?: EscrowUncheckedCreateNestedManyWithoutRecipientInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     verificationCodes?: VerificationCodeUncheckedCreateNestedManyWithoutUserInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
   }
 
   export type UserCreateOrConnectWithoutEscrowsCreatedInput = {
@@ -9553,6 +9792,7 @@ export namespace Prisma {
     escrowsCreated?: EscrowCreateNestedManyWithoutCreatorInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     verificationCodes?: VerificationCodeCreateNestedManyWithoutUserInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
   }
 
   export type UserUncheckedCreateWithoutEscrowsReceivedInput = {
@@ -9567,6 +9807,7 @@ export namespace Prisma {
     escrowsCreated?: EscrowUncheckedCreateNestedManyWithoutCreatorInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     verificationCodes?: VerificationCodeUncheckedCreateNestedManyWithoutUserInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
   }
 
   export type UserCreateOrConnectWithoutEscrowsReceivedInput = {
@@ -9576,9 +9817,9 @@ export namespace Prisma {
 
   export type MessageCreateWithoutEscrowInput = {
     id?: string
-    senderId: string
     content: string
     createdAt?: Date | string
+    sender: UserCreateNestedOneWithoutMessagesInput
   }
 
   export type MessageUncheckedCreateWithoutEscrowInput = {
@@ -9621,6 +9862,7 @@ export namespace Prisma {
     escrowsReceived?: EscrowUpdateManyWithoutRecipientNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     verificationCodes?: VerificationCodeUpdateManyWithoutUserNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEscrowsCreatedInput = {
@@ -9635,6 +9877,7 @@ export namespace Prisma {
     escrowsReceived?: EscrowUncheckedUpdateManyWithoutRecipientNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     verificationCodes?: VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
   }
 
   export type UserUpsertWithoutEscrowsReceivedInput = {
@@ -9660,6 +9903,7 @@ export namespace Prisma {
     escrowsCreated?: EscrowUpdateManyWithoutCreatorNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     verificationCodes?: VerificationCodeUpdateManyWithoutUserNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEscrowsReceivedInput = {
@@ -9674,6 +9918,7 @@ export namespace Prisma {
     escrowsCreated?: EscrowUncheckedUpdateManyWithoutCreatorNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     verificationCodes?: VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
   }
 
   export type MessageUpsertWithWhereUniqueWithoutEscrowInput = {
@@ -9692,17 +9937,6 @@ export namespace Prisma {
     data: XOR<MessageUpdateManyMutationInput, MessageUncheckedUpdateManyWithoutEscrowInput>
   }
 
-  export type MessageScalarWhereInput = {
-    AND?: MessageScalarWhereInput | MessageScalarWhereInput[]
-    OR?: MessageScalarWhereInput[]
-    NOT?: MessageScalarWhereInput | MessageScalarWhereInput[]
-    id?: StringFilter<"Message"> | string
-    escrowId?: StringFilter<"Message"> | string
-    senderId?: StringFilter<"Message"> | string
-    content?: StringFilter<"Message"> | string
-    createdAt?: DateTimeFilter<"Message"> | Date | string
-  }
-
   export type EscrowCreateWithoutMessagesInput = {
     id?: string
     contractAddress?: string | null
@@ -9713,7 +9947,9 @@ export namespace Prisma {
     status?: $Enums.EscrowStatus
     description: string
     terms?: string | null
+    creatorWallet?: string | null
     recipientEmail: string
+    recipientWallet?: string | null
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -9737,8 +9973,10 @@ export namespace Prisma {
     description: string
     terms?: string | null
     creatorId: string
+    creatorWallet?: string | null
     recipientEmail: string
     recipientId?: string | null
+    recipientWallet?: string | null
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -9752,6 +9990,41 @@ export namespace Prisma {
   export type EscrowCreateOrConnectWithoutMessagesInput = {
     where: EscrowWhereUniqueInput
     create: XOR<EscrowCreateWithoutMessagesInput, EscrowUncheckedCreateWithoutMessagesInput>
+  }
+
+  export type UserCreateWithoutMessagesInput = {
+    id?: string
+    email: string
+    walletAddress?: string | null
+    isVerified?: boolean
+    name?: string | null
+    avatar?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    escrowsCreated?: EscrowCreateNestedManyWithoutCreatorInput
+    escrowsReceived?: EscrowCreateNestedManyWithoutRecipientInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    verificationCodes?: VerificationCodeCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutMessagesInput = {
+    id?: string
+    email: string
+    walletAddress?: string | null
+    isVerified?: boolean
+    name?: string | null
+    avatar?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    escrowsCreated?: EscrowUncheckedCreateNestedManyWithoutCreatorInput
+    escrowsReceived?: EscrowUncheckedCreateNestedManyWithoutRecipientInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    verificationCodes?: VerificationCodeUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutMessagesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMessagesInput, UserUncheckedCreateWithoutMessagesInput>
   }
 
   export type EscrowUpsertWithoutMessagesInput = {
@@ -9775,7 +10048,9 @@ export namespace Prisma {
     status?: EnumEscrowStatusFieldUpdateOperationsInput | $Enums.EscrowStatus
     description?: StringFieldUpdateOperationsInput | string
     terms?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorWallet?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: StringFieldUpdateOperationsInput | string
+    recipientWallet?: NullableStringFieldUpdateOperationsInput | string | null
     buyerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     sellerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     disputed?: BoolFieldUpdateOperationsInput | boolean
@@ -9799,8 +10074,10 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     terms?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
+    creatorWallet?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: StringFieldUpdateOperationsInput | string
     recipientId?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientWallet?: NullableStringFieldUpdateOperationsInput | string | null
     buyerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     sellerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     disputed?: BoolFieldUpdateOperationsInput | boolean
@@ -9809,6 +10086,47 @@ export namespace Prisma {
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpsertWithoutMessagesInput = {
+    update: XOR<UserUpdateWithoutMessagesInput, UserUncheckedUpdateWithoutMessagesInput>
+    create: XOR<UserCreateWithoutMessagesInput, UserUncheckedCreateWithoutMessagesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMessagesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMessagesInput, UserUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type UserUpdateWithoutMessagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    escrowsCreated?: EscrowUpdateManyWithoutCreatorNestedInput
+    escrowsReceived?: EscrowUpdateManyWithoutRecipientNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    verificationCodes?: VerificationCodeUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMessagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    escrowsCreated?: EscrowUncheckedUpdateManyWithoutCreatorNestedInput
+    escrowsReceived?: EscrowUncheckedUpdateManyWithoutRecipientNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    verificationCodes?: VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type EscrowCreateManyCreatorInput = {
@@ -9821,8 +10139,10 @@ export namespace Prisma {
     status?: $Enums.EscrowStatus
     description: string
     terms?: string | null
+    creatorWallet?: string | null
     recipientEmail: string
     recipientId?: string | null
+    recipientWallet?: string | null
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -9844,7 +10164,9 @@ export namespace Prisma {
     description: string
     terms?: string | null
     creatorId: string
+    creatorWallet?: string | null
     recipientEmail: string
+    recipientWallet?: string | null
     buyerConfirmed?: boolean
     sellerConfirmed?: boolean
     disputed?: boolean
@@ -9871,6 +10193,13 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type MessageCreateManySenderInput = {
+    id?: string
+    escrowId: string
+    content: string
+    createdAt?: Date | string
+  }
+
   export type EscrowUpdateWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9881,7 +10210,9 @@ export namespace Prisma {
     status?: EnumEscrowStatusFieldUpdateOperationsInput | $Enums.EscrowStatus
     description?: StringFieldUpdateOperationsInput | string
     terms?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorWallet?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: StringFieldUpdateOperationsInput | string
+    recipientWallet?: NullableStringFieldUpdateOperationsInput | string | null
     buyerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     sellerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     disputed?: BoolFieldUpdateOperationsInput | boolean
@@ -9904,8 +10235,10 @@ export namespace Prisma {
     status?: EnumEscrowStatusFieldUpdateOperationsInput | $Enums.EscrowStatus
     description?: StringFieldUpdateOperationsInput | string
     terms?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorWallet?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: StringFieldUpdateOperationsInput | string
     recipientId?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientWallet?: NullableStringFieldUpdateOperationsInput | string | null
     buyerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     sellerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     disputed?: BoolFieldUpdateOperationsInput | boolean
@@ -9927,8 +10260,10 @@ export namespace Prisma {
     status?: EnumEscrowStatusFieldUpdateOperationsInput | $Enums.EscrowStatus
     description?: StringFieldUpdateOperationsInput | string
     terms?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorWallet?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: StringFieldUpdateOperationsInput | string
     recipientId?: NullableStringFieldUpdateOperationsInput | string | null
+    recipientWallet?: NullableStringFieldUpdateOperationsInput | string | null
     buyerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     sellerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     disputed?: BoolFieldUpdateOperationsInput | boolean
@@ -9949,7 +10284,9 @@ export namespace Prisma {
     status?: EnumEscrowStatusFieldUpdateOperationsInput | $Enums.EscrowStatus
     description?: StringFieldUpdateOperationsInput | string
     terms?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorWallet?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: StringFieldUpdateOperationsInput | string
+    recipientWallet?: NullableStringFieldUpdateOperationsInput | string | null
     buyerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     sellerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     disputed?: BoolFieldUpdateOperationsInput | boolean
@@ -9973,7 +10310,9 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     terms?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
+    creatorWallet?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: StringFieldUpdateOperationsInput | string
+    recipientWallet?: NullableStringFieldUpdateOperationsInput | string | null
     buyerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     sellerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     disputed?: BoolFieldUpdateOperationsInput | boolean
@@ -9996,7 +10335,9 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     terms?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
+    creatorWallet?: NullableStringFieldUpdateOperationsInput | string | null
     recipientEmail?: StringFieldUpdateOperationsInput | string
+    recipientWallet?: NullableStringFieldUpdateOperationsInput | string | null
     buyerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     sellerConfirmed?: BoolFieldUpdateOperationsInput | boolean
     disputed?: BoolFieldUpdateOperationsInput | boolean
@@ -10055,6 +10396,27 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MessageUpdateWithoutSenderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    escrow?: EscrowUpdateOneRequiredWithoutMessagesNestedInput
+  }
+
+  export type MessageUncheckedUpdateWithoutSenderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    escrowId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MessageUncheckedUpdateManyWithoutSenderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    escrowId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type MessageCreateManyEscrowInput = {
     id?: string
     senderId: string
@@ -10064,9 +10426,9 @@ export namespace Prisma {
 
   export type MessageUpdateWithoutEscrowInput = {
     id?: StringFieldUpdateOperationsInput | string
-    senderId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sender?: UserUpdateOneRequiredWithoutMessagesNestedInput
   }
 
   export type MessageUncheckedUpdateWithoutEscrowInput = {

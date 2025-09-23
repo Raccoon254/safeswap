@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { ArrowLeft, Shield, Clock, CheckCircle, AlertTriangle, User, Mail, FileText, Coins, MessageSquare, Copy, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Shield, Clock, CheckCircle, AlertTriangle, User, Mail, FileText, Coins, MessageSquare, Copy, ExternalLink, Wallet } from 'lucide-react'
 import Link from 'next/link'
 
 const EscrowView = () => {
@@ -216,6 +216,44 @@ const EscrowView = () => {
     }
   }
 
+  const updateWalletAddress = async (e) => {
+    e.preventDefault()
+    if (!walletAddress.trim()) return
+
+    setIsUpdatingWallet(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const response = await fetch(`/api/escrows/${params.id}/wallet`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ walletAddress })
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to update wallet address')
+      }
+
+      const data = await response.json()
+      setSuccess('✅ Wallet address updated successfully!')
+      setWalletAddress('')
+
+      // Refresh escrow data
+      await fetchEscrow()
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccess(''), 3000)
+    } catch (error) {
+      console.error('Error updating wallet address:', error)
+      setError(error.message)
+    } finally {
+      setIsUpdatingWallet(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0c0219] flex items-center justify-center">
@@ -373,6 +411,32 @@ const EscrowView = () => {
                         <p className="text-[#B7BDC6]">{new Date(escrow?.completedAt).toLocaleDateString()}</p>
                       </div>
                     )}
+                    {escrow?.transactionHash && (
+                      <div>
+                        <label className="text-sm text-[#F0B90B] font-medium">Transaction Hash</label>
+                        <div className="flex items-start gap-2">
+                          <p className="text-sm text-[#B7BDC6] font-mono break-all flex-1" title={escrow.transactionHash}>
+                            {escrow.transactionHash}
+                          </p>
+                          <button
+                            onClick={() => copyToClipboard(escrow.transactionHash)}
+                            className="p-1 hover:bg-[#F0B90B]/10 rounded transition-colors flex-shrink-0 mt-0.5"
+                            title="Copy transaction hash"
+                          >
+                            <Copy className="w-4 h-4 text-[#F0B90B]" />
+                          </button>
+                          <a
+                            href={`https://etherscan.io/tx/${escrow.transactionHash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1 hover:bg-[#F0B90B]/10 rounded transition-colors flex-shrink-0 mt-0.5"
+                            title="View on Etherscan"
+                          >
+                            <ExternalLink className="w-4 h-4 text-[#F0B90B]" />
+                          </a>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -505,10 +569,26 @@ const EscrowView = () => {
                     </div>
                   )}
 
+                  {/* Wallet Address Requirement */}
+                  {((isCreator && !escrow?.creatorWallet) || (isRecipient && !escrow?.recipientWallet)) && (
+                    <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                      <p className="text-yellow-400 text-sm flex items-center gap-2">
+                        <Wallet className="w-4 h-4" />
+                        Please add your wallet address below before confirming the trade.
+                      </p>
+                    </div>
+                  )}
+
                   <div className="flex flex-wrap gap-4">
                     <button
                       onClick={handleConfirm}
-                      disabled={actionLoading === 'confirm' || (isCreator && escrow?.sellerConfirmed) || (isRecipient && escrow?.buyerConfirmed)}
+                      disabled={
+                        actionLoading === 'confirm' ||
+                        (isCreator && escrow?.sellerConfirmed) ||
+                        (isRecipient && escrow?.buyerConfirmed) ||
+                        (isCreator && !escrow?.creatorWallet) ||
+                        (isRecipient && !escrow?.recipientWallet)
+                      }
                       className="flex-1 min-w-[200px] bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2"
                     >
                       {actionLoading === 'confirm' ? (
@@ -521,6 +601,8 @@ const EscrowView = () => {
                           <CheckCircle className="w-5 h-5" />
                           {(isCreator && escrow?.sellerConfirmed) || (isRecipient && escrow?.buyerConfirmed)
                             ? 'Already Confirmed'
+                            : ((isCreator && !escrow?.creatorWallet) || (isRecipient && !escrow?.recipientWallet))
+                            ? 'Add Wallet First'
                             : 'Confirm Trade'
                           }
                         </>
@@ -586,6 +668,96 @@ const EscrowView = () => {
                       </span>
                     )}
                   </div>
+                </div>
+              </div>
+
+              {/* Wallet Address Section */}
+              <div className="bg-gray-900/20 border border-[#2B3139]/10 rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <Wallet className="w-6 h-6 text-[#F0B90B]" />
+                  <h3 className="text-lg font-bold text-white">Wallet Addresses</h3>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Creator Wallet */}
+                  <div className="p-4 bg-[#0c0219] rounded-lg border border-[#2B3139]/10">
+                    <p className="text-sm text-[#F0B90B] font-medium mb-2">Creator Wallet</p>
+                    {escrow?.creatorWallet ? (
+                      <div className="flex items-start gap-2">
+                        <p className="text-[#B7BDC6] text-sm font-mono break-all flex-1" title={escrow.creatorWallet}>
+                          {escrow.creatorWallet}
+                        </p>
+                        <button
+                          onClick={() => copyToClipboard(escrow.creatorWallet)}
+                          className="p-1 hover:bg-[#F0B90B]/10 rounded transition-colors flex-shrink-0"
+                          title="Copy address"
+                        >
+                          <Copy className="w-4 h-4 text-[#F0B90B]" />
+                        </button>
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 text-sm">Not provided</p>
+                    )}
+                  </div>
+
+                  {/* Recipient Wallet */}
+                  <div className="p-4 bg-[#0c0219] rounded-lg border border-[#2B3139]/10">
+                    <p className="text-sm text-[#F0B90B] font-medium mb-2">Recipient Wallet</p>
+                    {escrow?.recipientWallet ? (
+                      <div className="flex items-start gap-2">
+                        <p className="text-[#B7BDC6] text-sm font-mono break-all flex-1" title={escrow.recipientWallet}>
+                          {escrow.recipientWallet}
+                        </p>
+                        <button
+                          onClick={() => copyToClipboard(escrow.recipientWallet)}
+                          className="p-1 hover:bg-[#F0B90B]/10 rounded transition-colors flex-shrink-0"
+                          title="Copy address"
+                        >
+                          <Copy className="w-4 h-4 text-[#F0B90B]" />
+                        </button>
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 text-sm">Not provided</p>
+                    )}
+                  </div>
+
+                  {/* Wallet Address Input */}
+                  {((isCreator && !escrow?.creatorWallet) || (isRecipient && !escrow?.recipientWallet)) && (
+                    <div className="mt-4 pt-4 border-t border-[#2B3139]/10">
+                      <p className="text-sm text-[#F0B90B] font-medium mb-3">
+                        Add Your Wallet Address
+                      </p>
+                      <p className="text-xs text-[#B7BDC6] mb-3">
+                        Enter your wallet address to receive tokens when the trade is completed.
+                      </p>
+                      <form onSubmit={updateWalletAddress} className="space-y-3">
+                        <input
+                          type="text"
+                          value={walletAddress}
+                          onChange={(e) => setWalletAddress(e.target.value)}
+                          placeholder="0x..."
+                          className="w-full px-4 py-3 bg-[#0c0219] border border-[#2B3139]/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#F0B90B] focus:border-transparent font-mono text-sm"
+                        />
+                        <button
+                          type="submit"
+                          disabled={!walletAddress.trim() || isUpdatingWallet}
+                          className="w-full bg-[#F0B90B] hover:bg-[#FCD535] disabled:opacity-50 disabled:cursor-not-allowed text-[#0c0219] py-2 px-4 rounded-lg font-bold transition-colors duration-200 flex items-center justify-center gap-2"
+                        >
+                          {isUpdatingWallet ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-[#0c0219]/30 border-t-[#0c0219] rounded-full animate-spin"></div>
+                              Updating...
+                            </>
+                          ) : (
+                            <>
+                              <Wallet className="w-4 h-4" />
+                              Add Wallet Address
+                            </>
+                          )}
+                        </button>
+                      </form>
+                    </div>
+                  )}
                 </div>
               </div>
 

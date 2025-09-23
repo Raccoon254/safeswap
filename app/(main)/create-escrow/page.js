@@ -14,12 +14,15 @@ const CreateEscrow = () => {
     amount: '',
     recipientEmail: '',
     description: '',
-    terms: ''
+    terms: '',
+    creatorWallet: ''
   })
   const [isCreating, setIsCreating] = useState(false)
   const [errors, setErrors] = useState({})
   const [success, setSuccess] = useState('')
   const [visibleSections, setVisibleSections] = useState(new Set())
+  const [balanceInfo, setBalanceInfo] = useState(null)
+  const [isCheckingBalance, setIsCheckingBalance] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -73,10 +76,11 @@ const CreateEscrow = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
+    const newFormData = {
+      ...formData,
       [name]: value
-    }))
+    }
+    setFormData(newFormData)
 
     // Clear error when user starts typing
     if (errors[name]) {
@@ -90,6 +94,14 @@ const CreateEscrow = () => {
     if (success) {
       setSuccess('')
     }
+
+    // Check balance when amount or wallet changes
+    if ((name === 'amount' || name === 'creatorWallet') && newFormData.creatorWallet && newFormData.amount && newFormData.tokenAddress) {
+      // Debounce balance check
+      setTimeout(() => {
+        checkBalance(newFormData.tokenAddress, newFormData.creatorWallet, newFormData.amount)
+      }, 500)
+    }
   }
 
   const handleTokenSelect = (token) => {
@@ -98,6 +110,41 @@ const CreateEscrow = () => {
       tokenSymbol: token.symbol,
       tokenAddress: token.address
     }))
+
+    // Check balance if wallet and amount are provided
+    if (formData.creatorWallet && formData.amount) {
+      checkBalance(token.address, formData.creatorWallet, formData.amount)
+    }
+  }
+
+  const checkBalance = async (tokenAddress, walletAddress, amount) => {
+    if (!walletAddress || !amount || !tokenAddress) return
+
+    setIsCheckingBalance(true)
+    try {
+      const response = await fetch('/api/wallet/balance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          walletAddress,
+          tokenAddress,
+          amount
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setBalanceInfo(data)
+      } else {
+        console.error('Failed to check balance')
+        setBalanceInfo(null)
+      }
+    } catch (error) {
+      console.error('Error checking balance:', error)
+      setBalanceInfo(null)
+    } finally {
+      setIsCheckingBalance(false)
+    }
   }
 
   const validateForm = () => {
@@ -117,6 +164,15 @@ const CreateEscrow = () => {
 
     if (!formData.description.trim()) {
       newErrors.description = 'Please provide a description'
+    }
+
+    if (formData.creatorWallet && !/^0x[a-fA-F0-9]{40}$/.test(formData.creatorWallet)) {
+      newErrors.creatorWallet = 'Please enter a valid wallet address'
+    }
+
+    // Check balance if wallet is provided
+    if (formData.creatorWallet && balanceInfo?.balanceCheck && !balanceInfo.balanceCheck.hasSufficientBalance) {
+      newErrors.amount = `Insufficient balance. You have ${balanceInfo.balance} ${formData.tokenSymbol}, but need ${formData.amount}`
     }
 
     setErrors(newErrors)
@@ -155,7 +211,8 @@ const CreateEscrow = () => {
         amount: '',
         recipientEmail: '',
         description: '',
-        terms: ''
+        terms: '',
+        creatorWallet: ''
       })
 
       // Redirect after a short delay to show success message
@@ -316,6 +373,79 @@ const CreateEscrow = () => {
                   <AlertCircle className="w-4 h-4" />
                   {errors.description}
                 </p>
+              )}
+            </div>
+
+            {/* Creator Wallet */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Wallet className="w-6 h-6 text-[#F0B90B]" />
+                <h3 className="text-xl font-bold text-white">Your Wallet Address</h3>
+                <span className="text-sm text-[#B7BDC6] bg-[#F0B90B]/10 px-2 py-1 rounded">Optional</span>
+              </div>
+              <input
+                type="text"
+                id="creatorWallet"
+                name="creatorWallet"
+                value={formData.creatorWallet}
+                onChange={handleInputChange}
+                placeholder="0x... (You can add this later)"
+                className={`w-full px-6 py-4 bg-[#0c0219] border rounded-xl text-white text-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#F0B90B] focus:border-transparent transition-all duration-300 font-mono ${
+                  errors.creatorWallet ? 'border-red-500' : 'border-[#2B3139]/10'
+                }`}
+              />
+              {errors.creatorWallet && (
+                <p className="text-sm text-red-400 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  {errors.creatorWallet}
+                </p>
+              )}
+              <p className="text-xs text-[#B7BDC6]">
+                Your wallet address for receiving payments. You can add this now or later on the escrow page.
+              </p>
+
+              {/* Balance Display */}
+              {formData.creatorWallet && formData.amount && formData.tokenAddress && (
+                <div className="mt-4 p-4 bg-[#0c0219] border border-[#2B3139]/10 rounded-lg">
+                  {isCheckingBalance ? (
+                    <div className="flex items-center gap-2 text-[#B7BDC6] text-sm">
+                      <div className="w-4 h-4 border-2 border-[#F0B90B]/30 border-t-[#F0B90B] rounded-full animate-spin"></div>
+                      Checking balance...
+                    </div>
+                  ) : balanceInfo ? (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-[#B7BDC6]">Current Balance:</span>
+                        <span className="text-white font-mono">
+                          {balanceInfo.balance} {formData.tokenSymbol}
+                        </span>
+                      </div>
+                      {balanceInfo.balanceCheck && (
+                        <div className={`p-3 rounded-lg border ${
+                          balanceInfo.balanceCheck.hasSufficientBalance
+                            ? 'bg-green-500/10 border-green-500/20'
+                            : 'bg-red-500/10 border-red-500/20'
+                        }`}>
+                          <div className="flex items-center gap-2">
+                            {balanceInfo.balanceCheck.hasSufficientBalance ? (
+                              <CheckCircle className="w-4 h-4 text-green-400" />
+                            ) : (
+                              <AlertCircle className="w-4 h-4 text-red-400" />
+                            )}
+                            <span className={`text-sm font-medium ${
+                              balanceInfo.balanceCheck.hasSufficientBalance ? 'text-green-400' : 'text-red-400'
+                            }`}>
+                              {balanceInfo.balanceCheck.hasSufficientBalance
+                                ? 'Sufficient balance ✓'
+                                : `Insufficient balance - Need ${balanceInfo.balanceCheck.shortfall} more ${formData.tokenSymbol}`
+                              }
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
+                </div>
               )}
             </div>
 

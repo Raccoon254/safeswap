@@ -67,17 +67,23 @@ export async function POST(request) {
     }
 
     const { user } = await AuthService.verifyToken(token)
-    const { tokenAddress, tokenSymbol, amount, recipientEmail, description, terms } = await request.json()
+    const { tokenAddress, tokenSymbol, amount, recipientEmail, description, terms, creatorWallet } = await request.json()
 
     // Validate input
     if (!tokenAddress || !tokenSymbol || !amount || !recipientEmail || !description) {
       return NextResponse.json({ error: 'All required fields must be provided' }, { status: 400 })
     }
 
+    // Validate wallet address if provided
+    if (creatorWallet && !/^0x[a-fA-F0-9]{40}$/.test(creatorWallet)) {
+      return NextResponse.json({ error: 'Invalid creator wallet address format' }, { status: 400 })
+    }
+
     // Create escrow
     const escrow = await prisma.escrow.create({
       data: {
         creatorId: user.id,
+        creatorWallet: creatorWallet || null,
         tokenAddress,
         tokenSymbol,
         amount,

@@ -23,6 +23,7 @@ model User {
   escrowsReceived   Escrow[]           @relation("Recipient")
   sessions          Session[]
   verificationCodes VerificationCode[]
+  messages          Message[]
 
   @@map("users")
 }
@@ -64,9 +65,11 @@ model Escrow {
   description     String
   terms           String?
 
-  creatorId      String
-  recipientEmail String // Email of recipient
-  recipientId    String? // User ID when recipient registers
+  creatorId       String
+  creatorWallet   String? // Creator's wallet address
+  recipientEmail  String // Email of recipient
+  recipientId     String? // User ID when recipient registers
+  recipientWallet String? // Recipient's wallet address for receiving tokens
 
   buyerConfirmed  Boolean @default(false)
   sellerConfirmed Boolean @default(false)
@@ -94,6 +97,7 @@ model Message {
   createdAt DateTime @default(now())
 
   escrow Escrow @relation(fields: [escrowId], references: [id], onDelete: Cascade)
+  sender User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
 
   @@map("messages")
 }
