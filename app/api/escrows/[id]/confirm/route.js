@@ -4,7 +4,8 @@ import { prisma } from '../../../../../lib/prisma'
 import { EmailService } from '../../../../../lib/email'
 import { EscrowContractService } from '../../../../../lib/escrow-contract'
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+  const params = await props.params;
   try {
     const token = request.cookies.get('safeswap_token')?.value
 

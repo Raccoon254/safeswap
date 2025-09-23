@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { AuthService } from '../../../../../lib/auth'
 import { prisma } from '../../../../../lib/prisma'
 
-export async function POST(request, { params }) {
+export async function POST(request, props) {
+  const params = await props.params;
   try {
     const token = request.cookies.get('safeswap_token')?.value
 
@@ -55,7 +56,8 @@ export async function POST(request, { params }) {
   }
 }
 
-export async function GET(request, { params }) {
+export async function GET(request, props) {
+  const params = await props.params;
   try {
     const token = request.cookies.get('safeswap_token')?.value
 
