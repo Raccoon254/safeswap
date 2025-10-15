@@ -4731,16 +4731,19 @@ export namespace Prisma {
   }
 
   export type EscrowAvgAggregateOutputType = {
+    contractEscrowId: number | null
     chainId: number | null
   }
 
   export type EscrowSumAggregateOutputType = {
+    contractEscrowId: number | null
     chainId: number | null
   }
 
   export type EscrowMinAggregateOutputType = {
     id: string | null
     contractAddress: string | null
+    contractEscrowId: number | null
     chainId: number | null
     tokenAddress: string | null
     tokenSymbol: string | null
@@ -4766,6 +4769,7 @@ export namespace Prisma {
   export type EscrowMaxAggregateOutputType = {
     id: string | null
     contractAddress: string | null
+    contractEscrowId: number | null
     chainId: number | null
     tokenAddress: string | null
     tokenSymbol: string | null
@@ -4791,6 +4795,7 @@ export namespace Prisma {
   export type EscrowCountAggregateOutputType = {
     id: number
     contractAddress: number
+    contractEscrowId: number
     chainId: number
     tokenAddress: number
     tokenSymbol: number
@@ -4816,16 +4821,19 @@ export namespace Prisma {
 
 
   export type EscrowAvgAggregateInputType = {
+    contractEscrowId?: true
     chainId?: true
   }
 
   export type EscrowSumAggregateInputType = {
+    contractEscrowId?: true
     chainId?: true
   }
 
   export type EscrowMinAggregateInputType = {
     id?: true
     contractAddress?: true
+    contractEscrowId?: true
     chainId?: true
     tokenAddress?: true
     tokenSymbol?: true
@@ -4851,6 +4859,7 @@ export namespace Prisma {
   export type EscrowMaxAggregateInputType = {
     id?: true
     contractAddress?: true
+    contractEscrowId?: true
     chainId?: true
     tokenAddress?: true
     tokenSymbol?: true
@@ -4876,6 +4885,7 @@ export namespace Prisma {
   export type EscrowCountAggregateInputType = {
     id?: true
     contractAddress?: true
+    contractEscrowId?: true
     chainId?: true
     tokenAddress?: true
     tokenSymbol?: true
@@ -4988,6 +4998,7 @@ export namespace Prisma {
   export type EscrowGroupByOutputType = {
     id: string
     contractAddress: string | null
+    contractEscrowId: number | null
     chainId: number
     tokenAddress: string
     tokenSymbol: string
@@ -5032,6 +5043,7 @@ export namespace Prisma {
   export type EscrowSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     contractAddress?: boolean
+    contractEscrowId?: boolean
     chainId?: boolean
     tokenAddress?: boolean
     tokenSymbol?: boolean
@@ -5061,6 +5073,7 @@ export namespace Prisma {
   export type EscrowSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     contractAddress?: boolean
+    contractEscrowId?: boolean
     chainId?: boolean
     tokenAddress?: boolean
     tokenSymbol?: boolean
@@ -5088,6 +5101,7 @@ export namespace Prisma {
   export type EscrowSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     contractAddress?: boolean
+    contractEscrowId?: boolean
     chainId?: boolean
     tokenAddress?: boolean
     tokenSymbol?: boolean
@@ -5115,6 +5129,7 @@ export namespace Prisma {
   export type EscrowSelectScalar = {
     id?: boolean
     contractAddress?: boolean
+    contractEscrowId?: boolean
     chainId?: boolean
     tokenAddress?: boolean
     tokenSymbol?: boolean
@@ -5137,7 +5152,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type EscrowOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "contractAddress" | "chainId" | "tokenAddress" | "tokenSymbol" | "amount" | "status" | "description" | "terms" | "creatorId" | "creatorWallet" | "recipientEmail" | "recipientId" | "recipientWallet" | "buyerConfirmed" | "sellerConfirmed" | "disputed" | "disputeReason" | "transactionHash" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["escrow"]>
+  export type EscrowOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "contractAddress" | "contractEscrowId" | "chainId" | "tokenAddress" | "tokenSymbol" | "amount" | "status" | "description" | "terms" | "creatorId" | "creatorWallet" | "recipientEmail" | "recipientId" | "recipientWallet" | "buyerConfirmed" | "sellerConfirmed" | "disputed" | "disputeReason" | "transactionHash" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["escrow"]>
   export type EscrowInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | UserDefaultArgs<ExtArgs>
     recipient?: boolean | Escrow$recipientArgs<ExtArgs>
@@ -5163,6 +5178,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       contractAddress: string | null
+      contractEscrowId: number | null
       chainId: number
       tokenAddress: string
       tokenSymbol: string
@@ -5611,6 +5627,7 @@ export namespace Prisma {
   interface EscrowFieldRefs {
     readonly id: FieldRef<"Escrow", 'String'>
     readonly contractAddress: FieldRef<"Escrow", 'String'>
+    readonly contractEscrowId: FieldRef<"Escrow", 'Int'>
     readonly chainId: FieldRef<"Escrow", 'Int'>
     readonly tokenAddress: FieldRef<"Escrow", 'String'>
     readonly tokenSymbol: FieldRef<"Escrow", 'String'>
@@ -7209,6 +7226,7 @@ export namespace Prisma {
   export const EscrowScalarFieldEnum: {
     id: 'id',
     contractAddress: 'contractAddress',
+    contractEscrowId: 'contractEscrowId',
     chainId: 'chainId',
     tokenAddress: 'tokenAddress',
     tokenSymbol: 'tokenSymbol',
@@ -7576,6 +7594,7 @@ export namespace Prisma {
     NOT?: EscrowWhereInput | EscrowWhereInput[]
     id?: StringFilter<"Escrow"> | string
     contractAddress?: StringNullableFilter<"Escrow"> | string | null
+    contractEscrowId?: IntNullableFilter<"Escrow"> | number | null
     chainId?: IntFilter<"Escrow"> | number
     tokenAddress?: StringFilter<"Escrow"> | string
     tokenSymbol?: StringFilter<"Escrow"> | string
@@ -7604,6 +7623,7 @@ export namespace Prisma {
   export type EscrowOrderByWithRelationInput = {
     id?: SortOrder
     contractAddress?: SortOrderInput | SortOrder
+    contractEscrowId?: SortOrderInput | SortOrder
     chainId?: SortOrder
     tokenAddress?: SortOrder
     tokenSymbol?: SortOrder
@@ -7635,6 +7655,7 @@ export namespace Prisma {
     OR?: EscrowWhereInput[]
     NOT?: EscrowWhereInput | EscrowWhereInput[]
     contractAddress?: StringNullableFilter<"Escrow"> | string | null
+    contractEscrowId?: IntNullableFilter<"Escrow"> | number | null
     chainId?: IntFilter<"Escrow"> | number
     tokenAddress?: StringFilter<"Escrow"> | string
     tokenSymbol?: StringFilter<"Escrow"> | string
@@ -7663,6 +7684,7 @@ export namespace Prisma {
   export type EscrowOrderByWithAggregationInput = {
     id?: SortOrder
     contractAddress?: SortOrderInput | SortOrder
+    contractEscrowId?: SortOrderInput | SortOrder
     chainId?: SortOrder
     tokenAddress?: SortOrder
     tokenSymbol?: SortOrder
@@ -7696,6 +7718,7 @@ export namespace Prisma {
     NOT?: EscrowScalarWhereWithAggregatesInput | EscrowScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Escrow"> | string
     contractAddress?: StringNullableWithAggregatesFilter<"Escrow"> | string | null
+    contractEscrowId?: IntNullableWithAggregatesFilter<"Escrow"> | number | null
     chainId?: IntWithAggregatesFilter<"Escrow"> | number
     tokenAddress?: StringWithAggregatesFilter<"Escrow"> | string
     tokenSymbol?: StringWithAggregatesFilter<"Escrow"> | string
@@ -8000,6 +8023,7 @@ export namespace Prisma {
   export type EscrowCreateInput = {
     id?: string
     contractAddress?: string | null
+    contractEscrowId?: number | null
     chainId?: number
     tokenAddress: string
     tokenSymbol: string
@@ -8026,6 +8050,7 @@ export namespace Prisma {
   export type EscrowUncheckedCreateInput = {
     id?: string
     contractAddress?: string | null
+    contractEscrowId?: number | null
     chainId?: number
     tokenAddress: string
     tokenSymbol: string
@@ -8052,6 +8077,7 @@ export namespace Prisma {
   export type EscrowUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    contractEscrowId?: NullableIntFieldUpdateOperationsInput | number | null
     chainId?: IntFieldUpdateOperationsInput | number
     tokenAddress?: StringFieldUpdateOperationsInput | string
     tokenSymbol?: StringFieldUpdateOperationsInput | string
@@ -8078,6 +8104,7 @@ export namespace Prisma {
   export type EscrowUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    contractEscrowId?: NullableIntFieldUpdateOperationsInput | number | null
     chainId?: IntFieldUpdateOperationsInput | number
     tokenAddress?: StringFieldUpdateOperationsInput | string
     tokenSymbol?: StringFieldUpdateOperationsInput | string
@@ -8104,6 +8131,7 @@ export namespace Prisma {
   export type EscrowCreateManyInput = {
     id?: string
     contractAddress?: string | null
+    contractEscrowId?: number | null
     chainId?: number
     tokenAddress: string
     tokenSymbol: string
@@ -8129,6 +8157,7 @@ export namespace Prisma {
   export type EscrowUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    contractEscrowId?: NullableIntFieldUpdateOperationsInput | number | null
     chainId?: IntFieldUpdateOperationsInput | number
     tokenAddress?: StringFieldUpdateOperationsInput | string
     tokenSymbol?: StringFieldUpdateOperationsInput | string
@@ -8152,6 +8181,7 @@ export namespace Prisma {
   export type EscrowUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    contractEscrowId?: NullableIntFieldUpdateOperationsInput | number | null
     chainId?: IntFieldUpdateOperationsInput | number
     tokenAddress?: StringFieldUpdateOperationsInput | string
     tokenSymbol?: StringFieldUpdateOperationsInput | string
@@ -8486,6 +8516,17 @@ export namespace Prisma {
     _max?: NestedEnumCodeTypeFilter<$PrismaModel>
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -8523,6 +8564,7 @@ export namespace Prisma {
   export type EscrowCountOrderByAggregateInput = {
     id?: SortOrder
     contractAddress?: SortOrder
+    contractEscrowId?: SortOrder
     chainId?: SortOrder
     tokenAddress?: SortOrder
     tokenSymbol?: SortOrder
@@ -8546,12 +8588,14 @@ export namespace Prisma {
   }
 
   export type EscrowAvgOrderByAggregateInput = {
+    contractEscrowId?: SortOrder
     chainId?: SortOrder
   }
 
   export type EscrowMaxOrderByAggregateInput = {
     id?: SortOrder
     contractAddress?: SortOrder
+    contractEscrowId?: SortOrder
     chainId?: SortOrder
     tokenAddress?: SortOrder
     tokenSymbol?: SortOrder
@@ -8577,6 +8621,7 @@ export namespace Prisma {
   export type EscrowMinOrderByAggregateInput = {
     id?: SortOrder
     contractAddress?: SortOrder
+    contractEscrowId?: SortOrder
     chainId?: SortOrder
     tokenAddress?: SortOrder
     tokenSymbol?: SortOrder
@@ -8600,7 +8645,24 @@ export namespace Prisma {
   }
 
   export type EscrowSumOrderByAggregateInput = {
+    contractEscrowId?: SortOrder
     chainId?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -8956,6 +9018,14 @@ export namespace Prisma {
     connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -9203,6 +9273,33 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -9257,6 +9354,7 @@ export namespace Prisma {
   export type EscrowCreateWithoutCreatorInput = {
     id?: string
     contractAddress?: string | null
+    contractEscrowId?: number | null
     chainId?: number
     tokenAddress: string
     tokenSymbol: string
@@ -9282,6 +9380,7 @@ export namespace Prisma {
   export type EscrowUncheckedCreateWithoutCreatorInput = {
     id?: string
     contractAddress?: string | null
+    contractEscrowId?: number | null
     chainId?: number
     tokenAddress: string
     tokenSymbol: string
@@ -9317,6 +9416,7 @@ export namespace Prisma {
   export type EscrowCreateWithoutRecipientInput = {
     id?: string
     contractAddress?: string | null
+    contractEscrowId?: number | null
     chainId?: number
     tokenAddress: string
     tokenSymbol: string
@@ -9342,6 +9442,7 @@ export namespace Prisma {
   export type EscrowUncheckedCreateWithoutRecipientInput = {
     id?: string
     contractAddress?: string | null
+    contractEscrowId?: number | null
     chainId?: number
     tokenAddress: string
     tokenSymbol: string
@@ -9472,6 +9573,7 @@ export namespace Prisma {
     NOT?: EscrowScalarWhereInput | EscrowScalarWhereInput[]
     id?: StringFilter<"Escrow"> | string
     contractAddress?: StringNullableFilter<"Escrow"> | string | null
+    contractEscrowId?: IntNullableFilter<"Escrow"> | number | null
     chainId?: IntFilter<"Escrow"> | number
     tokenAddress?: StringFilter<"Escrow"> | string
     tokenSymbol?: StringFilter<"Escrow"> | string
@@ -9940,6 +10042,7 @@ export namespace Prisma {
   export type EscrowCreateWithoutMessagesInput = {
     id?: string
     contractAddress?: string | null
+    contractEscrowId?: number | null
     chainId?: number
     tokenAddress: string
     tokenSymbol: string
@@ -9965,6 +10068,7 @@ export namespace Prisma {
   export type EscrowUncheckedCreateWithoutMessagesInput = {
     id?: string
     contractAddress?: string | null
+    contractEscrowId?: number | null
     chainId?: number
     tokenAddress: string
     tokenSymbol: string
@@ -10041,6 +10145,7 @@ export namespace Prisma {
   export type EscrowUpdateWithoutMessagesInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    contractEscrowId?: NullableIntFieldUpdateOperationsInput | number | null
     chainId?: IntFieldUpdateOperationsInput | number
     tokenAddress?: StringFieldUpdateOperationsInput | string
     tokenSymbol?: StringFieldUpdateOperationsInput | string
@@ -10066,6 +10171,7 @@ export namespace Prisma {
   export type EscrowUncheckedUpdateWithoutMessagesInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    contractEscrowId?: NullableIntFieldUpdateOperationsInput | number | null
     chainId?: IntFieldUpdateOperationsInput | number
     tokenAddress?: StringFieldUpdateOperationsInput | string
     tokenSymbol?: StringFieldUpdateOperationsInput | string
@@ -10132,6 +10238,7 @@ export namespace Prisma {
   export type EscrowCreateManyCreatorInput = {
     id?: string
     contractAddress?: string | null
+    contractEscrowId?: number | null
     chainId?: number
     tokenAddress: string
     tokenSymbol: string
@@ -10156,6 +10263,7 @@ export namespace Prisma {
   export type EscrowCreateManyRecipientInput = {
     id?: string
     contractAddress?: string | null
+    contractEscrowId?: number | null
     chainId?: number
     tokenAddress: string
     tokenSymbol: string
@@ -10203,6 +10311,7 @@ export namespace Prisma {
   export type EscrowUpdateWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    contractEscrowId?: NullableIntFieldUpdateOperationsInput | number | null
     chainId?: IntFieldUpdateOperationsInput | number
     tokenAddress?: StringFieldUpdateOperationsInput | string
     tokenSymbol?: StringFieldUpdateOperationsInput | string
@@ -10228,6 +10337,7 @@ export namespace Prisma {
   export type EscrowUncheckedUpdateWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    contractEscrowId?: NullableIntFieldUpdateOperationsInput | number | null
     chainId?: IntFieldUpdateOperationsInput | number
     tokenAddress?: StringFieldUpdateOperationsInput | string
     tokenSymbol?: StringFieldUpdateOperationsInput | string
@@ -10253,6 +10363,7 @@ export namespace Prisma {
   export type EscrowUncheckedUpdateManyWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    contractEscrowId?: NullableIntFieldUpdateOperationsInput | number | null
     chainId?: IntFieldUpdateOperationsInput | number
     tokenAddress?: StringFieldUpdateOperationsInput | string
     tokenSymbol?: StringFieldUpdateOperationsInput | string
@@ -10277,6 +10388,7 @@ export namespace Prisma {
   export type EscrowUpdateWithoutRecipientInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    contractEscrowId?: NullableIntFieldUpdateOperationsInput | number | null
     chainId?: IntFieldUpdateOperationsInput | number
     tokenAddress?: StringFieldUpdateOperationsInput | string
     tokenSymbol?: StringFieldUpdateOperationsInput | string
@@ -10302,6 +10414,7 @@ export namespace Prisma {
   export type EscrowUncheckedUpdateWithoutRecipientInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    contractEscrowId?: NullableIntFieldUpdateOperationsInput | number | null
     chainId?: IntFieldUpdateOperationsInput | number
     tokenAddress?: StringFieldUpdateOperationsInput | string
     tokenSymbol?: StringFieldUpdateOperationsInput | string
@@ -10327,6 +10440,7 @@ export namespace Prisma {
   export type EscrowUncheckedUpdateManyWithoutRecipientInput = {
     id?: StringFieldUpdateOperationsInput | string
     contractAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    contractEscrowId?: NullableIntFieldUpdateOperationsInput | number | null
     chainId?: IntFieldUpdateOperationsInput | number
     tokenAddress?: StringFieldUpdateOperationsInput | string
     tokenSymbol?: StringFieldUpdateOperationsInput | string

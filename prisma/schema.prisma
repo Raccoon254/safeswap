@@ -57,6 +57,7 @@ model VerificationCode {
 model Escrow {
   id              String       @id @default(uuid())
   contractAddress String? // Smart contract address
+  contractEscrowId Int? // On-chain escrow ID from smart contract
   chainId         Int          @default(1) // Ethereum mainnet
   tokenAddress    String // Token contract address (0x0 for ETH)
   tokenSymbol     String // ETH, USDC, etc.

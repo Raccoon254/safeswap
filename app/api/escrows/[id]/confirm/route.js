@@ -132,35 +132,28 @@ export async function POST(request, props) {
       // Don't fail the confirmation if emails fail
     }
 
-    // Handle token transfer if both parties confirmed
+    // If both confirmed, provide transfer instructions
+    let transferInstructions = null
     if (bothConfirmed) {
-      try {
-        // Simulate token transfer (in production, this would interact with smart contract)
-        const transferResult = await EscrowContractService.simulateTokenTransfer(
-          updatedEscrow.creatorWallet,
-          updatedEscrow.recipientWallet,
-          updatedEscrow.tokenAddress,
-          updatedEscrow.amount
-        )
-
-        // Update escrow with transaction hash
-        await prisma.escrow.update({
-          where: { id: params.id },
-          data: {
-            transactionHash: transferResult.transactionHash
-          }
-        })
-
-        console.log('Token transfer simulated:', transferResult)
-      } catch (transferError) {
-        console.error('Error processing token transfer:', transferError)
-        // Don't fail the confirmation if transfer simulation fails
+      transferInstructions = {
+        action: 'TRANSFER_REQUIRED',
+        from: updatedEscrow.creatorWallet,
+        to: updatedEscrow.recipientWallet,
+        tokenAddress: updatedEscrow.tokenAddress,
+        tokenSymbol: updatedEscrow.tokenSymbol,
+        amount: updatedEscrow.amount,
+        message: 'Creator must now transfer tokens to recipient via their wallet'
       }
+
+      console.log('⚠️  Both parties confirmed! Creator needs to transfer tokens:', transferInstructions)
     }
 
     return NextResponse.json({
-      message: bothConfirmed ? 'Escrow completed successfully! Tokens are being transferred.' : 'Confirmation recorded',
-      escrow: updatedEscrow
+      message: bothConfirmed
+        ? 'Both parties confirmed! Creator, please transfer the tokens to the recipient.'
+        : 'Confirmation recorded',
+      escrow: updatedEscrow,
+      transferInstructions
     })
 
   } catch (error) {

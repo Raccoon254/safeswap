@@ -67,16 +67,32 @@ export async function POST(request) {
     }
 
     const { user } = await AuthService.verifyToken(token)
-    const { tokenAddress, tokenSymbol, amount, recipientEmail, description, terms, creatorWallet } = await request.json()
+    const {
+      tokenAddress,
+      tokenSymbol,
+      amount,
+      recipientEmail,
+      recipientWallet,
+      description,
+      terms,
+      creatorWallet,
+      transactionHash,
+      contractEscrowId,
+      contractAddress
+    } = await request.json()
 
     // Validate input
     if (!tokenAddress || !tokenSymbol || !amount || !recipientEmail || !description) {
       return NextResponse.json({ error: 'All required fields must be provided' }, { status: 400 })
     }
 
-    // Validate wallet address if provided
+    // Validate wallet addresses
     if (creatorWallet && !/^0x[a-fA-F0-9]{40}$/.test(creatorWallet)) {
       return NextResponse.json({ error: 'Invalid creator wallet address format' }, { status: 400 })
+    }
+
+    if (recipientWallet && !/^0x[a-fA-F0-9]{40}$/.test(recipientWallet)) {
+      return NextResponse.json({ error: 'Invalid recipient wallet address format' }, { status: 400 })
     }
 
     // Create escrow
@@ -84,13 +100,17 @@ export async function POST(request) {
       data: {
         creatorId: user.id,
         creatorWallet: creatorWallet || null,
+        recipientWallet: recipientWallet || null,
         tokenAddress,
         tokenSymbol,
         amount,
         recipientEmail,
         description,
         terms: terms || null,
-        status: 'PENDING'
+        status: 'PENDING',
+        transactionHash: transactionHash || null,
+        contractEscrowId: contractEscrowId || null,
+        contractAddress: contractAddress || null
       },
       include: {
         creator: {

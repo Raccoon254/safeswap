@@ -1,20 +1,19 @@
-// Simplified ERC-20 Token Escrow Contract ABI
+// Escrow Contract ABI - Matches deployed contract
 export const ESCROW_ABI = [
   {
     "inputs": [
-      {"name": "_seller", "type": "address"},
+      {"name": "_recipient", "type": "address"},
       {"name": "_token", "type": "address"},
-      {"name": "_amount", "type": "uint256"},
-      {"name": "_description", "type": "string"}
+      {"name": "_amount", "type": "uint256"}
     ],
     "name": "createEscrow",
-    "outputs": [{"name": "escrowId", "type": "uint256"}],
-    "stateMutability": "nonpayable",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "payable",
     "type": "function"
   },
   {
     "inputs": [{"name": "_escrowId", "type": "uint256"}],
-    "name": "confirmTrade",
+    "name": "confirmEscrow",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -34,26 +33,19 @@ export const ESCROW_ABI = [
     "type": "function"
   },
   {
-    "inputs": [{"name": "_escrowId", "type": "uint256"}],
-    "name": "releaseFunds",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [{"name": "", "type": "uint256"}],
     "name": "escrows",
     "outputs": [
-      {"name": "buyer", "type": "address"},
-      {"name": "seller", "type": "address"},
+      {"name": "creator", "type": "address"},
+      {"name": "recipient", "type": "address"},
       {"name": "token", "type": "address"},
       {"name": "amount", "type": "uint256"},
-      {"name": "buyerConfirmed", "type": "bool"},
-      {"name": "sellerConfirmed", "type": "bool"},
+      {"name": "status", "type": "uint8"},
+      {"name": "creatorConfirmed", "type": "bool"},
+      {"name": "recipientConfirmed", "type": "bool"},
       {"name": "disputed", "type": "bool"},
-      {"name": "completed", "type": "bool"},
-      {"name": "cancelled", "type": "bool"},
-      {"name": "description", "type": "string"}
+      {"name": "createdAt", "type": "uint256"},
+      {"name": "completedAt", "type": "uint256"}
     ],
     "stateMutability": "view",
     "type": "function"
@@ -66,11 +58,41 @@ export const ESCROW_ABI = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "feePercentage",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{"name": "_escrowId", "type": "uint256"}],
+    "name": "getEscrow",
+    "outputs": [{
+      "name": "",
+      "type": "tuple",
+      "components": [
+        {"name": "creator", "type": "address"},
+        {"name": "recipient", "type": "address"},
+        {"name": "token", "type": "address"},
+        {"name": "amount", "type": "uint256"},
+        {"name": "status", "type": "uint8"},
+        {"name": "creatorConfirmed", "type": "bool"},
+        {"name": "recipientConfirmed", "type": "bool"},
+        {"name": "disputed", "type": "bool"},
+        {"name": "createdAt", "type": "uint256"},
+        {"name": "completedAt", "type": "uint256"}
+      ]
+    }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {"indexed": true, "name": "escrowId", "type": "uint256"},
-      {"indexed": true, "name": "buyer", "type": "address"},
-      {"indexed": true, "name": "seller", "type": "address"},
+      {"indexed": true, "name": "creator", "type": "address"},
+      {"indexed": true, "name": "recipient", "type": "address"},
+      {"indexed": false, "name": "token", "type": "address"},
       {"indexed": false, "name": "amount", "type": "uint256"}
     ],
     "name": "EscrowCreated",
@@ -80,9 +102,21 @@ export const ESCROW_ABI = [
     "anonymous": false,
     "inputs": [
       {"indexed": true, "name": "escrowId", "type": "uint256"},
-      {"indexed": false, "name": "completed", "type": "bool"}
+      {"indexed": true, "name": "confirmer", "type": "address"},
+      {"indexed": false, "name": "isCreator", "type": "bool"}
     ],
-    "name": "TradeConfirmed",
+    "name": "EscrowConfirmed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {"indexed": true, "name": "escrowId", "type": "uint256"},
+      {"indexed": true, "name": "recipient", "type": "address"},
+      {"indexed": false, "name": "amount", "type": "uint256"},
+      {"indexed": false, "name": "fee", "type": "uint256"}
+    ],
+    "name": "EscrowCompleted",
     "type": "event"
   }
 ]
@@ -132,12 +166,13 @@ export const ERC20_ABI = [
   }
 ]
 
-// Contract addresses (update with actual deployed addresses)
+// Contract addresses - Sepolia Testnet
 export const CONTRACT_ADDRESSES = {
   ESCROW: process.env.NEXT_PUBLIC_ESCROW_CONTRACT || "0x0000000000000000000000000000000000000000",
   TOKENS: {
-    USDC: "0xA0b86a33E6441A8A0B3f7bE80AE9e6a5bF15F935",
-    USDT: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-    DAI: "0x6B175474E89094C44Da98b954EedeAC495271d0F"
+    // Sepolia testnet token addresses
+    USDC: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // USDC on Sepolia
+    LINK: "0x779877A7B0D9E8603169DdbD7836e478b4624789", // LINK on Sepolia
+    DAI: "0x68194a729C2450ad26072b3D33ADaCbcef39D574"   // DAI on Sepolia
   }
 }

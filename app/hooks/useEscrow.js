@@ -1,51 +1,58 @@
 'use client'
 
 import { useState } from 'react'
-import { useAccount, useWriteContract, useReadContract } from 'wagmi'
-import { parseEther, formatEther } from 'viem'
+import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt } from 'wagmi'
+import { parseUnits } from 'viem'
 import { ESCROW_ABI, ERC20_ABI, CONTRACT_ADDRESSES } from '../contracts/escrowABI'
+
+const ESCROW_CONTRACT = process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ADDRESS
 
 export function useEscrow() {
   const { address } = useAccount()
-  const { writeContract } = useWriteContract()
+  const { writeContractAsync, data: hash } = useWriteContract()
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   // Read escrow count
   const { data: escrowCount } = useReadContract({
-    address: CONTRACT_ADDRESSES.ESCROW,
+    address: ESCROW_CONTRACT,
     abi: ESCROW_ABI,
     functionName: 'escrowCount',
   })
 
   // Create a new escrow
-  const createEscrow = async (tokenAddress, amount, recipientAddress, description) => {
+  const createEscrow = async (tokenAddress, amount, recipientAddress, decimals = 18) => {
     setIsLoading(true)
+    setError(null)
 
     try {
+      const amountWei = parseUnits(amount.toString(), decimals)
+
       // For ETH transfers
       if (tokenAddress === '0x0000000000000000000000000000000000000000') {
-        const result = await writeContract({
-          address: CONTRACT_ADDRESSES.ESCROW,
+        const hash = await writeContractAsync({
+          address: ESCROW_CONTRACT,
           abi: ESCROW_ABI,
           functionName: 'createEscrow',
-          args: [recipientAddress, tokenAddress, parseEther(amount), description],
-          value: parseEther(amount), // Send ETH with the transaction
+          args: [recipientAddress, tokenAddress, amountWei],
+          value: amountWei, // Send ETH with the transaction
         })
-        return result
+        return { hash }
       } else {
         // For ERC-20 tokens, need to approve first
-        await approveToken(tokenAddress, amount)
+        await approveToken(tokenAddress, amountWei)
 
-        const result = await writeContract({
-          address: CONTRACT_ADDRESSES.ESCROW,
+        const hash = await writeContractAsync({
+          address: ESCROW_CONTRACT,
           abi: ESCROW_ABI,
           functionName: 'createEscrow',
-          args: [recipientAddress, tokenAddress, parseEther(amount), description],
+          args: [recipientAddress, tokenAddress, amountWei],
         })
-        return result
+        return { hash }
       }
     } catch (error) {
       console.error('Error creating escrow:', error)
+      setError(error.message)
       throw error
     } finally {
       setIsLoading(false)
@@ -53,29 +60,32 @@ export function useEscrow() {
   }
 
   // Approve ERC-20 token spending
-  const approveToken = async (tokenAddress, amount) => {
-    return await writeContract({
+  const approveToken = async (tokenAddress, amountWei) => {
+    const hash = await writeContractAsync({
       address: tokenAddress,
       abi: ERC20_ABI,
       functionName: 'approve',
-      args: [CONTRACT_ADDRESSES.ESCROW, parseEther(amount)],
+      args: [ESCROW_CONTRACT, amountWei],
     })
+    return hash
   }
 
-  // Confirm trade
-  const confirmTrade = async (escrowId) => {
+  // Confirm escrow - This triggers automatic release when both confirm!
+  const confirmEscrow = async (contractEscrowId) => {
     setIsLoading(true)
+    setError(null)
 
     try {
-      const result = await writeContract({
-        address: CONTRACT_ADDRESSES.ESCROW,
+      const hash = await writeContractAsync({
+        address: ESCROW_CONTRACT,
         abi: ESCROW_ABI,
-        functionName: 'confirmTrade',
-        args: [escrowId],
+        functionName: 'confirmEscrow',
+        args: [BigInt(contractEscrowId)],
       })
-      return result
+      return { hash }
     } catch (error) {
-      console.error('Error confirming trade:', error)
+      console.error('Error confirming escrow:', error)
+      setError(error.message)
       throw error
     } finally {
       setIsLoading(false)
@@ -83,19 +93,21 @@ export function useEscrow() {
   }
 
   // Cancel escrow
-  const cancelEscrow = async (escrowId) => {
+  const cancelEscrow = async (contractEscrowId) => {
     setIsLoading(true)
+    setError(null)
 
     try {
-      const result = await writeContract({
-        address: CONTRACT_ADDRESSES.ESCROW,
+      const hash = await writeContractAsync({
+        address: ESCROW_CONTRACT,
         abi: ESCROW_ABI,
         functionName: 'cancelEscrow',
-        args: [escrowId],
+        args: [BigInt(contractEscrowId)],
       })
-      return result
+      return { hash }
     } catch (error) {
       console.error('Error cancelling escrow:', error)
+      setError(error.message)
       throw error
     } finally {
       setIsLoading(false)
@@ -103,19 +115,21 @@ export function useEscrow() {
   }
 
   // Dispute escrow
-  const disputeEscrow = async (escrowId) => {
+  const disputeEscrow = async (contractEscrowId) => {
     setIsLoading(true)
+    setError(null)
 
     try {
-      const result = await writeContract({
-        address: CONTRACT_ADDRESSES.ESCROW,
+      const hash = await writeContractAsync({
+        address: ESCROW_CONTRACT,
         abi: ESCROW_ABI,
         functionName: 'disputeEscrow',
-        args: [escrowId],
+        args: [BigInt(contractEscrowId)],
       })
-      return result
+      return { hash }
     } catch (error) {
       console.error('Error disputing escrow:', error)
+      setError(error.message)
       throw error
     } finally {
       setIsLoading(false)
@@ -124,11 +138,12 @@ export function useEscrow() {
 
   return {
     createEscrow,
-    confirmTrade,
+    confirmEscrow,
     cancelEscrow,
     disputeEscrow,
     approveToken,
     isLoading,
+    error,
     escrowCount: escrowCount ? Number(escrowCount) : 0
   }
 }

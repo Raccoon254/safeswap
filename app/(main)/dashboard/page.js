@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Shield, Clock, CheckCircle, AlertTriangle, Wallet, User, LogOut } from 'lucide-react'
+import { Plus, Shield, Clock, CheckCircle, AlertTriangle, Wallet, User, LogOut, RefreshCw, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
+import { useAccount } from 'wagmi'
 
 const Dashboard = () => {
+  const { address, isConnected } = useAccount()
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [escrows, setEscrows] = useState([])
@@ -17,9 +19,20 @@ const Dashboard = () => {
     totalValue: 0
   })
   const [walletBalance, setWalletBalance] = useState(null)
+  const [tokenBalances, setTokenBalances] = useState({})
   const [isBalanceLoading, setIsBalanceLoading] = useState(false)
+  const [selectedToken, setSelectedToken] = useState('ETH')
+  const [showTokenDropdown, setShowTokenDropdown] = useState(false)
   const [visibleSections, setVisibleSections] = useState(new Set())
   const router = useRouter()
+
+  // Sepolia testnet token addresses
+  const popularTokens = [
+    { symbol: 'ETH', address: '0x0000000000000000000000000000000000000000', name: 'Sepolia ETH' },
+    { symbol: 'USDC', address: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238', name: 'USD Coin' },
+    { symbol: 'LINK', address: '0x779877A7B0D9E8603169DdbD7836e478b4624789', name: 'Chainlink' },
+    { symbol: 'DAI', address: '0x68194a729C2450ad26072b3D33ADaCbcef39D574', name: 'Dai Stablecoin' }
+  ]
 
   useEffect(() => {
     checkAuth()
@@ -63,8 +76,11 @@ const Dashboard = () => {
 
       const data = await response.json()
       setUser(data.user)
-      if (data.user.walletAddress) {
-        fetchWalletBalance(data.user.walletAddress)
+
+      // Fetch balances for connected wallet or stored wallet address
+      const walletToUse = address || data.user.walletAddress
+      if (walletToUse) {
+        fetchAllTokenBalances(walletToUse)
       }
 
       // Fetch escrows
@@ -77,29 +93,45 @@ const Dashboard = () => {
     }
   }
 
-  const fetchWalletBalance = async (walletAddress) => {
+  // Fetch balances for all popular tokens
+  const fetchAllTokenBalances = async (walletAddress) => {
     if (!walletAddress) return
+
     setIsBalanceLoading(true)
-    try {
-      const response = await fetch('/api/wallet/balance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          walletAddress,
-          tokenAddress: '0x0000000000000000000000000000000000000000' // ETH
+    const balances = {}
+
+    for (const token of popularTokens) {
+      try {
+        const response = await fetch('/api/wallet/balance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            walletAddress,
+            tokenAddress: token.address
+          })
         })
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setWalletBalance(data)
-      } else {
-        setWalletBalance(null)
+
+        if (response.ok) {
+          const data = await response.json()
+          balances[token.symbol] = {
+            balance: data.balance,
+            address: token.address,
+            name: token.name
+          }
+        }
+      } catch (error) {
+        console.error(`Failed to fetch balance for ${token.symbol}:`, error)
       }
-    } catch (error) {
-      console.error('Failed to fetch wallet balance:', error)
-      setWalletBalance(null)
-    } finally {
-      setIsBalanceLoading(false)
+    }
+
+    setTokenBalances(balances)
+    setIsBalanceLoading(false)
+  }
+
+  const fetchWalletBalance = async (walletAddress) => {
+    const walletToUse = address || walletAddress
+    if (walletToUse) {
+      fetchAllTokenBalances(walletToUse)
     }
   }
 
@@ -231,26 +263,100 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div
-                className={`bg-gray-900/20 border border-[#2B3139]/10 rounded-xl p-6 transform transition-all duration-1000 hover:scale-105 hover:border-[#F0B90B]/30 ${
+                className={`bg-gray-900/20 border border-[#2B3139]/10 rounded-xl p-6 transform transition-all duration-1000 hover:scale-105 hover:border-[#F0B90B]/30 relative ${
                     visibleSections.has('stats') ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-100'
                 }`}
                 style={{ transitionDelay: '0ms' }}
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[#B7BDC6] text-sm">Linked Wallet (ETH)</p>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex-1">
+                  {/* Token Selector Dropdown */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowTokenDropdown(!showTokenDropdown)}
+                      className="flex items-center gap-2 text-[#B7BDC6] text-sm hover:text-white transition-colors group"
+                    >
+                      <Wallet className="w-4 h-4" />
+                      <span>Wallet Balance</span>
+                      <ChevronDown className={`w-4 h-4 transition-transform ${showTokenDropdown ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    {showTokenDropdown && (
+                      <div className="absolute z-[9999] top-full left-0 mt-2 bg-[#1a1d29] border border-[#2B3139] rounded-lg shadow-xl z-10 min-w-[200px]">
+                        {popularTokens.map((token) => (
+                          <button
+                            key={token.symbol}
+                            onClick={() => {
+                              setSelectedToken(token.symbol)
+                              setShowTokenDropdown(false)
+                            }}
+                            className={`w-full px-4 py-3 text-left hover:bg-[#F0B90B]/10 transition-colors border-b border-[#2B3139]/50 last:border-0 ${
+                              selectedToken === token.symbol ? 'bg-[#F0B90B]/20 text-[#F0B90B]' : 'text-gray-300'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <div className="font-medium">{token.symbol}</div>
+                                <div className="text-xs text-gray-500">{token.name}</div>
+                              </div>
+                              {tokenBalances[token.symbol] && (
+                                <div className="text-xs font-mono">
+                                  {parseFloat(tokenBalances[token.symbol].balance).toFixed(4)}
+                                </div>
+                              )}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Selected Token Balance */}
                   {isBalanceLoading ? (
-                      <div className="w-6 h-6 border-2 border-gray-500 border-t-white rounded-full animate-spin mt-2"></div>
-                  ) : walletBalance ? (
-                      <p className="text-2xl font-bold text-white mt-1">{walletBalance.balance} ETH</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="w-6 h-6 border-2 border-gray-500 border-t-white rounded-full animate-spin"></div>
+                        <span className="text-sm text-gray-400">Loading...</span>
+                      </div>
+                  ) : tokenBalances[selectedToken] ? (
+                      <div className="mt-2">
+                        <p className="text-3xl font-bold text-white font-mono">
+                          {parseFloat(tokenBalances[selectedToken].balance).toFixed(4)}
+                        </p>
+                        <p className="text-sm text-[#F0B90B] mt-1">{selectedToken}</p>
+                      </div>
                   ) : (
-                      <p className="text-sm text-gray-400 mt-1">Not available</p>
+                      <p className="text-sm text-gray-400 mt-2">No balance</p>
                   )}
                 </div>
-                <button onClick={() => fetchWalletBalance(user.walletAddress)} disabled={isBalanceLoading} className="text-gray-400 hover:text-white transition">
-                  <Wallet className={`w-8 h-8 text-[#F0B90B]`} />
+
+                {/* Refresh Button */}
+                <button
+                  onClick={() => fetchWalletBalance(user?.walletAddress)}
+                  disabled={isBalanceLoading}
+                  className="text-gray-400 hover:text-[#F0B90B] transition-colors disabled:opacity-50"
+                  title="Refresh balances"
+                >
+                  <RefreshCw className={`w-5 h-5 ${isBalanceLoading ? 'animate-spin' : ''}`} />
                 </button>
               </div>
+
+              {/* All Tokens Summary */}
+              {!isBalanceLoading && Object.keys(tokenBalances).length > 0 && (
+                <div className="mt-4 pt-4 border-t border-[#2B3139]/50">
+                  <p className="text-xs text-[#B7BDC6] mb-2">All Balances:</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {popularTokens.map((token) => (
+                      <div key={token.symbol} className="flex items-center justify-between text-xs">
+                        <span className="text-gray-400">{token.symbol}</span>
+                        <span className="font-mono text-gray-300">
+                          {tokenBalances[token.symbol] ? parseFloat(tokenBalances[token.symbol].balance).toFixed(2) : '--'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             {[
               { label: 'Total Escrows', value: stats.total.toString(), icon: Shield, color: 'text-[#F0B90B]', delay: '100ms' },
@@ -287,7 +393,7 @@ const Dashboard = () => {
       </section>
 
       {/* Escrows Section */}
-      <section id="escrows" className="py-16 bg-[#0c0219]">
+      <section id="escrows" className="py-16 z-10 bg-[#0c0219]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`mb-8 transform transition-all duration-1000 ${
             visibleSections.has('escrows') ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-100'

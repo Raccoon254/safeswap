@@ -4,8 +4,13 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { ArrowLeft, Shield, Clock, CheckCircle, AlertTriangle, User, Mail, FileText, Coins, MessageSquare, Copy, ExternalLink, Wallet } from 'lucide-react'
 import Link from 'next/link'
+import { useAccount, usePublicClient } from 'wagmi'
+import { useEscrow } from '@/app/hooks/useEscrow'
 
 const EscrowView = () => {
+  const { address, isConnected } = useAccount()
+  const { confirmEscrow, isLoading: isContractLoading, error: contractError } = useEscrow()
+  const publicClient = usePublicClient()
   const [user, setUser] = useState(null)
   const [escrow, setEscrow] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -17,6 +22,9 @@ const EscrowView = () => {
   const [messages, setMessages] = useState([])
   const [walletAddress, setWalletAddress] = useState('')
   const [isUpdatingWallet, setIsUpdatingWallet] = useState(false)
+  const [transferInstructions, setTransferInstructions] = useState(null)
+  const [transactionHash, setTransactionHash] = useState(null)
+  const [transactionStatus, setTransactionStatus] = useState('')
   const router = useRouter()
   const params = useParams()
 
@@ -50,6 +58,19 @@ const EscrowView = () => {
       clearInterval(pollInterval)
     }
   }, [escrow?.status])
+
+  // Auto-fill wallet address when wallet is connected and user needs to provide wallet
+  useEffect(() => {
+    if (isConnected && address && !walletAddress && escrow && user) {
+      const isCreator = escrow.creatorId === user.id
+      const isRecipient = escrow.recipientId === user.id
+
+      // Only auto-fill if the user doesn't have a wallet address set yet
+      if ((isCreator && !escrow.creatorWallet) || (isRecipient && !escrow.recipientWallet)) {
+        setWalletAddress(address)
+      }
+    }
+  }, [isConnected, address, escrow, user])
 
   const checkAuth = async () => {
     try {
@@ -135,35 +156,95 @@ const EscrowView = () => {
     setActionLoading('confirm')
     setError('')
     setSuccess('')
+    setTransactionHash(null)
+    setTransactionStatus('')
 
     try {
+      // Check if escrow has a contract ID (smart contract integration)
+      if (!escrow.contractEscrowId && escrow.contractEscrowId !== 0) {
+        // Legacy escrow without smart contract - just confirm in database
+        const response = await fetch(`/api/escrows/${params.id}/confirm`, {
+          method: 'POST',
+          credentials: 'include'
+        })
+
+        if (!response.ok) {
+          const data = await response.json()
+          throw new Error(data.error || 'Failed to confirm escrow')
+        }
+
+        const data = await response.json()
+        setSuccess('✅ Your confirmation has been recorded. Waiting for the other party.')
+        await fetchEscrow()
+        return
+      }
+
+      // NEW: Smart contract confirmation flow
+      setTransactionStatus('Preparing blockchain transaction...')
+
+      // Step 1: Call smart contract to confirm
+      setTransactionStatus('Waiting for wallet approval...')
+      const { hash } = await confirmEscrow(escrow.contractEscrowId)
+
+      setTransactionHash(hash)
+      setTransactionStatus('Transaction submitted. Waiting for confirmation...')
+
+      // Step 2: Wait for transaction confirmation
+      const receipt = await publicClient.waitForTransactionReceipt({ hash })
+
+      if (receipt.status !== 'success') {
+        throw new Error('Transaction failed on blockchain')
+      }
+
+      setTransactionStatus('Transaction confirmed! Updating database...')
+
+      // Step 3: Update database
       const response = await fetch(`/api/escrows/${params.id}/confirm`, {
         method: 'POST',
-        credentials: 'include'
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ transactionHash: hash })
       })
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to confirm escrow')
+        throw new Error(data.error || 'Failed to update database')
       }
 
       const data = await response.json()
 
       // Show success message
       if (data.escrow.status === 'COMPLETED') {
-        setSuccess('🎉 Trade completed successfully! Both parties have confirmed.')
+        setSuccess('🎉 Trade completed successfully! Tokens have been automatically transferred to the recipient.')
+        setTransactionStatus('Complete! Tokens transferred automatically.')
       } else {
-        setSuccess('✅ Your confirmation has been recorded. Waiting for the other party.')
+        setSuccess('✅ Your confirmation has been recorded on the blockchain. Waiting for the other party.')
+        setTransactionStatus('Confirmed on blockchain!')
       }
 
       // Refresh data
       await fetchEscrow()
 
-      // Clear success message after 5 seconds
-      setTimeout(() => setSuccess(''), 5000)
+      // Clear success message after 8 seconds
+      setTimeout(() => {
+        setSuccess('')
+        setTransactionStatus('')
+      }, 8000)
     } catch (error) {
       console.error('Error confirming escrow:', error)
-      setError(error.message)
+      let errorMessage = error.message
+
+      // User-friendly error messages
+      if (error.message?.includes('User rejected')) {
+        errorMessage = 'Transaction was rejected. Please try again.'
+      } else if (error.message?.includes('insufficient funds')) {
+        errorMessage = 'Insufficient funds for gas fees. Please add more ETH to your wallet.'
+      } else if (contractError) {
+        errorMessage = contractError
+      }
+
+      setError(errorMessage)
+      setTransactionStatus('')
     } finally {
       setActionLoading('')
     }
@@ -629,6 +710,62 @@ const EscrowView = () => {
                   </div>
                 </div>
               )}
+
+              {/* Transfer Tokens Section - Show when both confirmed */}
+              {transferInstructions && isCreator && escrow?.status === 'COMPLETED' && (
+                <div className="bg-gradient-to-r from-[#F0B90B]/10 to-[#FCD535]/10 border-2 border-[#F0B90B] rounded-xl p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Wallet className="w-6 h-6 text-[#F0B90B]" />
+                    <h3 className="text-xl font-bold text-white">Transfer Tokens</h3>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="p-4 bg-[#0c0219] rounded-lg border border-[#F0B90B]/20">
+                      <p className="text-[#F0B90B] font-medium mb-2">✅ Both parties have confirmed!</p>
+                      <p className="text-white text-sm mb-4">
+                        As the creator, you need to transfer the tokens to the recipient:
+                      </p>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-[#B7BDC6]">Amount:</span>
+                          <span className="text-white font-mono">{transferInstructions.amount} {transferInstructions.tokenSymbol}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-[#B7BDC6]">To:</span>
+                          <span className="text-white font-mono text-xs">{transferInstructions.to}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-[#B7BDC6]">Token:</span>
+                          <span className="text-white font-mono text-xs">{transferInstructions.tokenAddress}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                      <p className="text-yellow-400 text-sm flex items-start gap-2">
+                        <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                        <span>
+                          You must manually transfer the tokens using your wallet (MetaMask, etc).
+                          Use the recipient address and token details shown above.
+                        </span>
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        // Copy recipient address to clipboard
+                        navigator.clipboard.writeText(transferInstructions.to)
+                        setSuccess('✅ Recipient address copied to clipboard!')
+                        setTimeout(() => setSuccess(''), 3000)
+                      }}
+                      className="w-full bg-[#F0B90B] hover:bg-[#FCD535] text-[#0c0219] py-3 px-6 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2"
+                    >
+                      <Copy className="w-5 h-5" />
+                      Copy Recipient Address
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Sidebar */}
@@ -727,15 +864,22 @@ const EscrowView = () => {
                       <p className="text-sm text-[#F0B90B] font-medium mb-3">
                         Add Your Wallet Address
                       </p>
-                      <p className="text-xs text-[#B7BDC6] mb-3">
-                        Enter your wallet address to receive tokens when the trade is completed.
-                      </p>
+                      {isConnected && address ? (
+                        <p className="text-xs text-green-400 mb-3 flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" />
+                          Wallet connected - address auto-filled
+                        </p>
+                      ) : (
+                        <p className="text-xs text-[#B7BDC6] mb-3">
+                          Connect your wallet to auto-fill, or enter manually.
+                        </p>
+                      )}
                       <form onSubmit={updateWalletAddress} className="space-y-3">
                         <input
                           type="text"
                           value={walletAddress}
                           onChange={(e) => setWalletAddress(e.target.value)}
-                          placeholder="0x..."
+                          placeholder="0x... (Connect wallet to auto-fill)"
                           className="w-full px-4 py-3 bg-[#0c0219] border border-[#2B3139]/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#F0B90B] focus:border-transparent font-mono text-sm"
                         />
                         <button
@@ -813,6 +957,28 @@ const EscrowView = () => {
         </div>
       </section>
 
+      {/* Transaction Status */}
+      {transactionStatus && !success && !error && (
+        <div className="fixed bottom-4 right-4 bg-[#F0B90B]/10 border border-[#F0B90B]/20 rounded-xl p-4 max-w-md z-50">
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-5 border-2 border-[#F0B90B]/30 border-t-[#F0B90B] rounded-full animate-spin"></div>
+            <div>
+              <p className="text-[#F0B90B] font-medium">{transactionStatus}</p>
+              {transactionHash && (
+                <a
+                  href={`https://sepolia.etherscan.io/tx/${transactionHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-[#B7BDC6] hover:text-[#F0B90B] underline mt-1 inline-block"
+                >
+                  View on Etherscan →
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Success Message */}
       {success && (
         <div className="fixed bottom-4 right-4 bg-green-500/10 border border-green-500/20 rounded-xl p-4 max-w-md z-50">
@@ -820,6 +986,16 @@ const EscrowView = () => {
             <CheckCircle className="w-5 h-5" />
             {success}
           </p>
+          {transactionHash && (
+            <a
+              href={`https://sepolia.etherscan.io/tx/${transactionHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-green-300 hover:text-green-200 underline mt-2 inline-block"
+            >
+              View transaction on Etherscan →
+            </a>
+          )}
         </div>
       )}
 

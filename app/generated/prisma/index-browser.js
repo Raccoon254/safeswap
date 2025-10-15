@@ -152,6 +152,7 @@ exports.Prisma.VerificationCodeScalarFieldEnum = {
 exports.Prisma.EscrowScalarFieldEnum = {
   id: 'id',
   contractAddress: 'contractAddress',
+  contractEscrowId: 'contractEscrowId',
   chainId: 'chainId',
   tokenAddress: 'tokenAddress',
   tokenSymbol: 'tokenSymbol',

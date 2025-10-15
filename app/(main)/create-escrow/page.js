@@ -4,8 +4,13 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {ArrowLeft, Wallet, Shield, AlertCircle, User, Mail, FileText, Coins, CheckCircle, Gem} from 'lucide-react'
 import Link from 'next/link'
+import { useAccount, useWaitForTransactionReceipt, usePublicClient } from 'wagmi'
+import { useEscrow } from '@/app/hooks/useEscrow'
 
 const CreateEscrow = () => {
+  const { address, isConnected } = useAccount()
+  const { createEscrow, approveToken, isLoading: isContractLoading, error: contractError } = useEscrow()
+  const publicClient = usePublicClient()
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [formData, setFormData] = useState({
@@ -13,6 +18,7 @@ const CreateEscrow = () => {
     tokenSymbol: 'ETH',
     amount: '',
     recipientEmail: '',
+    recipientWallet: '', // NEW: Recipient wallet address
     description: '',
     terms: '',
     creatorWallet: ''
@@ -22,7 +28,10 @@ const CreateEscrow = () => {
   const [success, setSuccess] = useState('')
   const [visibleSections, setVisibleSections] = useState(new Set())
   const [balanceInfo, setBalanceInfo] = useState(null)
+  const [tokenBalances, setTokenBalances] = useState({}) // Store balances for all tokens
   const [isCheckingBalance, setIsCheckingBalance] = useState(false)
+  const [transactionHash, setTransactionHash] = useState(null)
+  const [transactionStatus, setTransactionStatus] = useState('') // 'approving', 'depositing', 'confirming', 'saving'
   const router = useRouter()
 
   useEffect(() => {
@@ -46,6 +55,45 @@ const CreateEscrow = () => {
     return () => observer.disconnect()
   }, [])
 
+  // Auto-fill wallet address when wallet is connected
+  useEffect(() => {
+    if (isConnected && address && !formData.creatorWallet) {
+      setFormData(prev => ({
+        ...prev,
+        creatorWallet: address
+      }))
+      // Fetch balances for all tokens
+      fetchAllTokenBalances(address)
+    }
+  }, [isConnected, address])
+
+  // Fetch balances for all popular tokens
+  const fetchAllTokenBalances = async (walletAddress) => {
+    if (!walletAddress) return
+
+    const balances = {}
+    for (const token of popularTokens) {
+      try {
+        const response = await fetch('/api/wallet/balance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            walletAddress,
+            tokenAddress: token.address
+          })
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          balances[token.address] = data.balance
+        }
+      } catch (error) {
+        console.error(`Failed to fetch balance for ${token.symbol}:`, error)
+      }
+    }
+    setTokenBalances(balances)
+  }
+
   const checkAuth = async () => {
     try {
       const response = await fetch('/api/auth/me', {
@@ -67,11 +115,12 @@ const CreateEscrow = () => {
     }
   }
 
+  // Sepolia testnet token addresses
   const popularTokens = [
-    { symbol: 'ETH', address: '0x0000000000000000000000000000000000000000', name: 'Ethereum' },
-    { symbol: 'USDC', address: '0xA0b86a33E6441A8A0B3f7bE80AE9e6a5bF15F935', name: 'USD Coin' },
-    { symbol: 'USDT', address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', name: 'Tether USD' },
-    { symbol: 'DAI', address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', name: 'Dai Stablecoin' }
+    { symbol: 'ETH', address: '0x0000000000000000000000000000000000000000', name: 'Sepolia ETH' },
+    { symbol: 'USDC', address: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238', name: 'USD Coin (Sepolia)' },
+    { symbol: 'LINK', address: '0x779877A7B0D9E8603169DdbD7836e478b4624789', name: 'Chainlink (Sepolia)' },
+    { symbol: 'DAI', address: '0x68194a729C2450ad26072b3D33ADaCbcef39D574', name: 'Dai (Sepolia)' }
   ]
 
   const handleInputChange = (e) => {
@@ -162,12 +211,24 @@ const CreateEscrow = () => {
       newErrors.recipientEmail = 'Recipient cannot be the same as you'
     }
 
+    if (!formData.recipientWallet || !/^0x[a-fA-F0-9]{40}$/.test(formData.recipientWallet)) {
+      newErrors.recipientWallet = 'Please enter a valid recipient wallet address'
+    }
+
     if (!formData.description.trim()) {
       newErrors.description = 'Please provide a description'
     }
 
-    if (formData.creatorWallet && !/^0x[a-fA-F0-9]{40}$/.test(formData.creatorWallet)) {
+    if (!formData.creatorWallet) {
+      newErrors.creatorWallet = 'Please connect your wallet'
+    } else if (!/^0x[a-fA-F0-9]{40}$/.test(formData.creatorWallet)) {
       newErrors.creatorWallet = 'Please enter a valid wallet address'
+    }
+
+    // Check if creator and recipient wallets are the same
+    if (formData.creatorWallet && formData.recipientWallet &&
+        formData.creatorWallet.toLowerCase() === formData.recipientWallet.toLowerCase()) {
+      newErrors.recipientWallet = 'Recipient wallet cannot be the same as your wallet'
     }
 
     // Check balance if wallet is provided
@@ -185,24 +246,109 @@ const CreateEscrow = () => {
     if (!validateForm()) return
 
     setIsCreating(true)
+    setTransactionHash(null)
 
     try {
+      // Step 1: Get token decimals for proper amount formatting
+      setTransactionStatus('Preparing transaction...')
+      let decimals = 18 // Default for ETH
+
+      if (formData.tokenAddress !== '0x0000000000000000000000000000000000000000') {
+        // Get decimals from token contract
+        try {
+          decimals = await publicClient.readContract({
+            address: formData.tokenAddress,
+            abi: [{
+              name: 'decimals',
+              type: 'function',
+              stateMutability: 'view',
+              inputs: [],
+              outputs: [{ type: 'uint8' }]
+            }],
+            functionName: 'decimals'
+          })
+        } catch (err) {
+          console.error('Failed to get decimals, using 18:', err)
+        }
+      }
+
+      // Step 2: Call smart contract to create escrow and deposit tokens
+      setTransactionStatus('Waiting for wallet approval...')
+      const { hash } = await createEscrow(
+        formData.tokenAddress,
+        formData.amount,
+        formData.recipientWallet,
+        decimals
+      )
+
+      setTransactionHash(hash)
+      setTransactionStatus('Transaction submitted. Waiting for confirmation...')
+
+      // Step 3: Wait for transaction confirmation
+      const receipt = await publicClient.waitForTransactionReceipt({ hash })
+
+      if (receipt.status !== 'success') {
+        throw new Error('Transaction failed on blockchain')
+      }
+
+      // Step 4: Extract escrow ID from contract event
+      setTransactionStatus('Extracting escrow details...')
+      const escrowCreatedEvent = receipt.logs.find(log => {
+        try {
+          // EscrowCreated event signature
+          return log.topics[0] === '0x...' // We'll need to get this from the contract
+        } catch {
+          return false
+        }
+      })
+
+      // For now, we'll fetch the escrow count from contract to get the ID
+      // The contract returns the escrow ID from createEscrow function
+      // We need to decode the transaction to get it
+      let contractEscrowId = null
+      try {
+        // The escrow ID is returned from the createEscrow function
+        // We can get it from the transaction receipt or read escrowCount
+        const escrowCount = await publicClient.readContract({
+          address: process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ADDRESS,
+          abi: [{
+            name: 'escrowCount',
+            type: 'function',
+            stateMutability: 'view',
+            inputs: [],
+            outputs: [{ type: 'uint256' }]
+          }],
+          functionName: 'escrowCount'
+        })
+        contractEscrowId = Number(escrowCount) - 1 // Latest escrow ID
+      } catch (err) {
+        console.error('Failed to get contract escrow ID:', err)
+      }
+
+      // Step 5: Save escrow to database
+      setTransactionStatus('Saving escrow to database...')
       const response = await fetch('/api/escrows', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          transactionHash: hash,
+          contractEscrowId,
+          contractAddress: process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ADDRESS
+        })
       })
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to create escrow')
+        throw new Error(data.error || 'Failed to save escrow to database')
       }
 
       const data = await response.json()
 
-      // Show success message briefly
-      setSuccess('Escrow created successfully! Redirecting...')
+      // Show success message
+      setSuccess('Escrow created successfully! Tokens deposited into smart contract. Redirecting...')
+      setTransactionStatus('Complete!')
 
       // Clear the form
       setFormData({
@@ -210,19 +356,32 @@ const CreateEscrow = () => {
         tokenSymbol: 'ETH',
         amount: '',
         recipientEmail: '',
+        recipientWallet: '',
         description: '',
         terms: '',
         creatorWallet: ''
       })
 
-      // Redirect after a short delay to show success message
+      // Redirect after a short delay
       setTimeout(() => {
         router.push(`/escrow/${data.escrow.id}`)
-      }, 1500)
+      }, 2000)
 
     } catch (error) {
       console.error('Error creating escrow:', error)
-      setErrors({ submit: error.message })
+      let errorMessage = error.message
+
+      // User-friendly error messages
+      if (error.message?.includes('User rejected')) {
+        errorMessage = 'Transaction was rejected. Please try again.'
+      } else if (error.message?.includes('insufficient funds')) {
+        errorMessage = 'Insufficient funds for gas fees. Please add more ETH to your wallet.'
+      } else if (contractError) {
+        errorMessage = contractError
+      }
+
+      setErrors({ submit: errorMessage })
+      setTransactionStatus('')
     } finally {
       setIsCreating(false)
     }
@@ -276,23 +435,67 @@ const CreateEscrow = () => {
                 <Gem className="w-6 h-6 text-[#F0B90B]" />
                 <h3 className="text-xl font-bold text-white">Select Token</h3>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {popularTokens.map((token) => (
                   <button
                     key={token.symbol}
                     type="button"
                     onClick={() => handleTokenSelect(token)}
-                    className={`group p-4 rounded-xl border transition-all duration-300 hover:scale-105 ${
+                    className={`group p-5 rounded-xl border transition-all duration-300 hover:scale-[1.02] ${
                       formData.tokenSymbol === token.symbol
-                        ? 'border-[#F0B90B] bg-[#F0B90B]/10 ring-2 ring-[#F0B90B]/20'
+                        ? 'border-[#F0B90B] bg-[#F0B90B]/10 ring-2 ring-[#F0B90B]/20 shadow-lg shadow-[#F0B90B]/10'
                         : 'border-[#2B3139]/10 hover:border-[#F0B90B]/50 bg-[#0c0219]'
                     }`}
                   >
-                    <div className="font-bold text-white text-lg">{token.symbol}</div>
-                    <div className="text-xs text-[#B7BDC6] mt-1">{token.name}</div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        {/* Token Icon */}
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${
+                          formData.tokenSymbol === token.symbol
+                            ? 'bg-[#F0B90B]/20 text-[#F0B90B]'
+                            : 'bg-gray-800 text-gray-400 group-hover:bg-gray-700'
+                        }`}>
+                          {token.symbol.slice(0, 2)}
+                        </div>
+
+                        {/* Token Details */}
+                        <div className="text-left">
+                          <div className="font-bold text-white text-lg">{token.symbol}</div>
+                          <div className="text-xs text-[#B7BDC6]">{token.name}</div>
+                        </div>
+                      </div>
+
+                      {/* Balance (if available) */}
+                      {formData.creatorWallet && (
+                        <div className="text-right">
+                          <div className="text-sm text-[#B7BDC6]">Balance</div>
+                          <div className="font-mono text-white text-sm">
+                            {tokenBalances[token.address] !== undefined ? (
+                              <span className={parseFloat(tokenBalances[token.address]) > 0 ? 'text-green-400' : 'text-gray-500'}>
+                                {parseFloat(tokenBalances[token.address]).toFixed(4)}
+                              </span>
+                            ) : (
+                              <div className="w-4 h-4 border-2 border-gray-600 border-t-[#F0B90B] rounded-full animate-spin mx-auto"></div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Selected Indicator */}
+                      {formData.tokenSymbol === token.symbol && (
+                        <div className="absolute top-3 right-3">
+                          <CheckCircle className="w-5 h-5 text-[#F0B90B]" />
+                        </div>
+                      )}
+                    </div>
                   </button>
                 ))}
               </div>
+              {!formData.creatorWallet && (
+                <p className="text-xs text-[#B7BDC6] bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+                  💡 Connect your wallet below to see token balances
+                </p>
+              )}
             </div>
 
             {/* Amount */}
@@ -351,6 +554,34 @@ const CreateEscrow = () => {
               )}
             </div>
 
+            {/* Recipient Wallet Address */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Wallet className="w-6 h-6 text-[#F0B90B]" />
+                <h3 className="text-xl font-bold text-white">Recipient Wallet Address</h3>
+              </div>
+              <input
+                type="text"
+                id="recipientWallet"
+                name="recipientWallet"
+                value={formData.recipientWallet}
+                onChange={handleInputChange}
+                placeholder="0x..."
+                className={`w-full px-6 py-4 bg-[#0c0219] border rounded-xl text-white text-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#F0B90B] focus:border-transparent transition-all duration-300 font-mono ${
+                  errors.recipientWallet ? 'border-red-500' : 'border-[#2B3139]/10'
+                }`}
+              />
+              {errors.recipientWallet && (
+                <p className="text-sm text-red-400 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  {errors.recipientWallet}
+                </p>
+              )}
+              <p className="text-xs text-[#B7BDC6]">
+                The recipient's wallet address where tokens will be sent. Make sure this is correct - tokens cannot be recovered if sent to the wrong address!
+              </p>
+            </div>
+
             {/* Description */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
@@ -381,7 +612,12 @@ const CreateEscrow = () => {
               <div className="flex items-center gap-3">
                 <Wallet className="w-6 h-6 text-[#F0B90B]" />
                 <h3 className="text-xl font-bold text-white">Your Wallet Address</h3>
-                <span className="text-sm text-[#B7BDC6] bg-[#F0B90B]/10 px-2 py-1 rounded">Optional</span>
+                {isConnected && (
+                  <span className="text-sm text-green-400 bg-green-500/10 px-2 py-1 rounded flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3" />
+                    Connected
+                  </span>
+                )}
               </div>
               <input
                 type="text"
@@ -389,10 +625,11 @@ const CreateEscrow = () => {
                 name="creatorWallet"
                 value={formData.creatorWallet}
                 onChange={handleInputChange}
-                placeholder="0x... (You can add this later)"
+                placeholder="0x... (Connect wallet to auto-fill)"
+                disabled={isConnected && address}
                 className={`w-full px-6 py-4 bg-[#0c0219] border rounded-xl text-white text-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#F0B90B] focus:border-transparent transition-all duration-300 font-mono ${
                   errors.creatorWallet ? 'border-red-500' : 'border-[#2B3139]/10'
-                }`}
+                } ${isConnected && address ? 'opacity-75 cursor-not-allowed' : ''}`}
               />
               {errors.creatorWallet && (
                 <p className="text-sm text-red-400 flex items-center gap-2">
@@ -401,7 +638,10 @@ const CreateEscrow = () => {
                 </p>
               )}
               <p className="text-xs text-[#B7BDC6]">
-                Your wallet address for receiving payments. You can add this now or later on the escrow page.
+                {isConnected && address
+                  ? 'Wallet address automatically filled from your connected wallet.'
+                  : 'Connect your wallet to automatically fill this field.'
+                }
               </p>
 
               {/* Balance Display */}
@@ -481,6 +721,28 @@ const CreateEscrow = () => {
                 </div>
               </div>
             </div>
+
+            {/* Transaction Status */}
+            {transactionStatus && (
+              <div className="bg-[#F0B90B]/10 border border-[#F0B90B]/20 rounded-xl p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 border-2 border-[#F0B90B]/30 border-t-[#F0B90B] rounded-full animate-spin"></div>
+                  <div>
+                    <p className="text-[#F0B90B] font-medium">{transactionStatus}</p>
+                    {transactionHash && (
+                      <a
+                        href={`https://sepolia.etherscan.io/tx/${transactionHash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-[#B7BDC6] hover:text-[#F0B90B] underline mt-1 inline-block"
+                      >
+                        View on Etherscan →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Success Message */}
             {success && (
