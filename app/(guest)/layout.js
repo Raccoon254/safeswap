@@ -65,11 +65,10 @@ export const metadata = {
         type: "website",
         images: [
             {
-                url: "/seo/image/thrasq.png",
+                url: "/seo/image/thraqs.jpg",
                 width: 1200,
                 height: 630,
                 alt: "Thraqs - Secure escrow platform for digital assets including crypto, social accounts, and domains",
-                type: "image/png",
             },
         ],
     },
@@ -78,7 +77,7 @@ export const metadata = {
         title: "Thraqs – Secure Escrow for Crypto, Social Accounts, Domains & More",
         description:
             "Trade digital assets safely. Smart escrow locks funds until both parties fulfill the deal. No KYC, no chargebacks, no scams.",
-        images: ["/seo/image/thrasq.png"],
+        images: ["/seo/image/thraqs.jpg"],
         creator: "@thraqs",
         site: "@thraqs",
     },
