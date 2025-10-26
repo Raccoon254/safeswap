@@ -9,50 +9,108 @@ const figtree = Figtree({
 });
 
 export const metadata = {
-    title: "SafeSwap – Secure Token Escrow with Built-in Dispute Resolution",
+    title: {
+        default: "Thraqs – Secure Escrow for Crypto, Social Accounts, Domains & More | KYC-Free Trading",
+        template: "%s | Thraqs"
+    },
     description:
-        "SafeSwap is a decentralized escrow platform for secure token trading with integrated chat and professional dispute resolution. Trade with confidence on Ethereum.",
+        "Trade digital assets with confidence on Thraqs. Our smart escrow system locks funds until both parties fulfill the deal—protecting you from scams, chargebacks, and fraud. Buy and sell crypto, social media accounts, domains, and more. Fast, neutral, and KYC-free. Powered by SafeSwap.",
     keywords: [
-        "SafeSwap",
-        "token escrow",
+        "Thraqs",
+        "SafeSwap escrow",
+        "digital asset escrow",
         "cryptocurrency escrow",
-        "decentralized trading",
-        "dispute resolution",
-        "secure token exchange",
+        "crypto escrow service",
+        "social media account trading",
+        "Instagram account escrow",
+        "Twitter account escrow",
+        "TikTok account trading",
+        "domain name escrow",
+        "NFT escrow",
+        "smart contract escrow",
+        "decentralized escrow",
+        "P2P trading platform",
+        "secure crypto trading",
+        "KYC-free escrow",
+        "anonymous trading",
+        "dispute resolution crypto",
+        "chargeback protection",
+        "scam protection trading",
         "ethereum escrow",
-        "crypto trading",
-        "blockchain escrow",
-        "DeFi trading"
+        "blockchain escrow service",
+        "DeFi escrow",
+        "web3 trading",
+        "trustless escrow",
+        "escrow smart contract",
+        "digital goods marketplace",
+        "safe crypto exchange"
     ],
-    authors: [{ name: "SafeSwap Team" }],
-    metadataBase: new URL("https://safeswap.app"),
+    authors: [
+        { name: "KenTom", url: "https://kentom.co.ke" },
+        { name: "Thraqs Team" }
+    ],
+    creator: "KenTom - https://kentom.co.ke",
+    publisher: "SafeSwap",
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://thraqs.app"),
+    alternates: {
+        canonical: "/",
+    },
     openGraph: {
-        title: "SafeSwap – Secure Token Escrow with Built-in Dispute Resolution",
+        title: "Thraqs – Secure Escrow for Crypto, Social Accounts, Domains & More",
         description:
-            "Trade tokens safely with smart contract escrow, built-in chat, and professional dispute resolution. Join thousands of users who trust SafeSwap.",
-        url: "https://safeswap.app",
-        siteName: "SafeSwap",
+            "Buy and sell digital assets with confidence. Our smart escrow system locks funds until both parties fulfill the deal—protecting you from scams, chargebacks, and fraud. Fast, neutral, and KYC-free.",
+        url: "https://thraqs.app",
+        siteName: "Thraqs",
+        locale: "en_US",
+        type: "website",
         images: [
             {
-                url: "/safeswap-banner.jpg",
+                url: "/seo/image/thrasq.png",
                 width: 1200,
                 height: 630,
-                alt: "SafeSwap secure token escrow platform",
+                alt: "Thraqs - Secure escrow platform for digital assets including crypto, social accounts, and domains",
+                type: "image/png",
             },
         ],
-        type: "website",
     },
     twitter: {
         card: "summary_large_image",
-        title: "SafeSwap – Secure Token Escrow with Built-in Dispute Resolution",
+        title: "Thraqs – Secure Escrow for Crypto, Social Accounts, Domains & More",
         description:
-            "The most secure way to trade tokens. Decentralized escrow with chat and dispute resolution built-in.",
-        images: ["/safeswap-banner.jpg"],
+            "Trade digital assets safely. Smart escrow locks funds until both parties fulfill the deal. No KYC, no chargebacks, no scams.",
+        images: ["/seo/image/thrasq.png"],
+        creator: "@thraqs",
+        site: "@thraqs",
+    },
+    robots: {
+        index: true,
+        follow: true,
+        nocache: false,
+        googleBot: {
+            index: true,
+            follow: true,
+            "max-video-preview": -1,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+        },
     },
     icons: {
-        icon: "/favicon.ico",
+        icon: [
+            { url: "/favicon.ico", sizes: "any" },
+            { url: "/logo/logo.png", type: "image/png", sizes: "512x512" },
+        ],
         shortcut: "/favicon.ico",
-        apple: "/apple-touch-icon.png",
+        apple: [
+            { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+        ],
+    },
+    manifest: "/site.webmanifest",
+    category: "finance",
+    classification: "Decentralized Finance, Escrow Services, Digital Asset Trading",
+    other: {
+        "apple-mobile-web-app-capable": "yes",
+        "apple-mobile-web-app-status-bar-style": "black-translucent",
+        "format-detection": "telephone=no",
     },
 };
 

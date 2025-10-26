@@ -55,7 +55,7 @@ export function useAuth() {
       const message = new SiweMessage({
         domain: window.location.host,
         address,
-        statement: 'Sign in to SafeSwap',
+        statement: 'Sign in to Thraqs',
         uri: window.location.origin,
         version: '1',
         chainId: 1, // Ethereum mainnet

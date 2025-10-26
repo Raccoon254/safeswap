@@ -9,8 +9,43 @@ const figtree = Figtree({
 });
 
 export const metadata = {
-    title: "SafeSwap Dashboard – Manage Your Escrows",
-    description: "Manage your token escrows, view transaction history, and create new secure trades on SafeSwap.",
+    title: {
+        default: "Dashboard – Manage Your Escrows | Thraqs",
+        template: "%s | Thraqs Dashboard"
+    },
+    description: "Manage your digital asset escrows, view transaction history, and create new secure trades on Thraqs. Track crypto, social accounts, domains, and more in one place.",
+    keywords: [
+        "escrow dashboard",
+        "manage escrow",
+        "crypto trading dashboard",
+        "digital asset management",
+        "transaction history",
+        "escrow tracking",
+        "Thraqs dashboard"
+    ],
+    authors: [
+        { name: "KenTom", url: "https://kentom.co.ke" },
+        { name: "Thraqs Team" }
+    ],
+    creator: "KenTom - https://kentom.co.ke",
+    publisher: "SafeSwap",
+    robots: {
+        index: false, // Dashboard pages should not be indexed
+        follow: false,
+        noarchive: true,
+    },
+    openGraph: {
+        title: "Thraqs Dashboard – Manage Your Escrows",
+        description: "Manage your digital asset escrows, view transaction history, and create new secure trades.",
+        images: [
+            {
+                url: "/seo/image/thrasq.png",
+                width: 1200,
+                height: 630,
+                alt: "Thraqs Dashboard",
+            },
+        ],
+    },
 };
 
 export default function MainLayout({ children }) {

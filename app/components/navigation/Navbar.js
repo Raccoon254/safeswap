@@ -1,7 +1,8 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import {Menu, X, Home, Shield, HelpCircle, Phone, Wallet, ChevronDown, Eclipse} from 'lucide-react';
+import {Menu, X, Home, Shield, HelpCircle, Phone, Wallet, ChevronDown} from 'lucide-react';
 import Link from "next/link";
+import Image from "next/image";
 import WalletButton from '../WalletButton';
 
 const Navbar = () => {
@@ -24,12 +25,18 @@ const Navbar = () => {
                     {/* Logo */}
                     <div className="flex items-center gap-3 group cursor-pointer">
                         <div className="relative">
-                            <div className="w-10 h-10 bg-[#F0B90B] rounded-xl flex items-center justify-center">
-                                <Eclipse className="w-6 h-6 text-[#0c0219]" />
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
+                                <Image
+                                    src="/logo/logo.png"
+                                    alt="SafeSwap Logo"
+                                    width={40}
+                                    height={40}
+                                    className="object-contain"
+                                />
                             </div>
                         </div>
                         <span className="text-2xl font-bold text-[#F0B90B]">
-                            SafeSwap
+                            Thraqs
                         </span>
                     </div>
 

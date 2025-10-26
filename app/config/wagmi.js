@@ -8,7 +8,7 @@ let _config
 export const config = (() => {
   if (!_config) {
     _config = getDefaultConfig({
-      appName: 'SafeSwap',
+      appName: 'Thraqs',
       projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'your-project-id',
       chains: [mainnet, sepolia],
       transports: {

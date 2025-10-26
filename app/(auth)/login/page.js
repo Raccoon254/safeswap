@@ -121,10 +121,10 @@ const Login = () => {
             <div className="w-12 h-12 bg-[#F0B90B] rounded-xl flex items-center justify-center">
               <Shield className="w-6 h-6 text-[#0c0219]" />
             </div>
-            <span className="text-2xl font-bold text-[#F0B90B]">SafeSwap</span>
+            <span className="text-2xl font-bold text-[#F0B90B]">Thraqs</span>
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">
-            {step === 'email' ? 'Welcome to SafeSwap' :
+            {step === 'email' ? 'Welcome to Thraqs' :
              step === 'nickname' ? 'Choose Your Nickname' :
              'Enter Verification Code'}
           </h1>
@@ -132,7 +132,7 @@ const Login = () => {
             {step === 'email'
               ? 'Sign in or create your secure escrow account'
               : step === 'nickname'
-              ? 'This will be your display name on SafeSwap'
+              ? 'This will be your display name on Thraqs'
               : `We sent a 6-digit code to ${formData.email}`
             }
           </p>
@@ -298,7 +298,7 @@ const Login = () => {
         {/* Footer */}
         <div className="text-center mt-6">
           <p className="text-gray-400 text-sm">
-            New to SafeSwap?{' '}
+            New to Thraqs?{' '}
             <Link href="/" className="text-[#F0B90B] hover:text-[#FCD535] transition-colors duration-200">
               Learn more about secure trading
             </Link>

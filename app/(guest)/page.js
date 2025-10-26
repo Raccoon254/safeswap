@@ -62,24 +62,28 @@ const Landing = () => {
 
     const faqs = [
         {
+            question: "What is Thraqs?",
+            answer: "Thraqs is a secure escrow platform owned and operated by SafeSwap. We provide safe trading for digital assets including cryptocurrency, social media accounts, domains, and more."
+        },
+        {
             question: "How does the escrow work?",
-            answer: "Tokens are locked in a smart contract until both parties confirm the trade is complete. No one can access the funds until terms are met."
+            answer: "Funds are locked in a smart contract until both parties confirm the trade is complete. No one can access the funds until terms are met, protecting both buyer and seller."
         },
         {
             question: "What happens if there's a dispute?",
             answer: "Our dispute resolution system allows moderators to review evidence and make fair decisions based on the original agreement."
         },
         {
-            question: "What tokens are supported?",
-            answer: "We support all ERC-20 tokens on Ethereum. Just connect your wallet and start trading."
+            question: "What can I trade on Thraqs?",
+            answer: "We support crypto (all ERC-20 tokens on Ethereum), social media accounts, domain names, and other digital assets. Just connect your wallet and start trading."
         },
         {
             question: "Are there any fees?",
             answer: "We charge a small 1% fee only when trades are successfully completed. No upfront costs."
         },
         {
-            question: "Do I need to create an account?",
-            answer: "No account needed. Just connect your wallet and start trading immediately."
+            question: "Do I need KYC or an account?",
+            answer: "No KYC or account needed. Just connect your wallet and start trading immediately. Fast, neutral, and anonymous."
         }
     ];
 
@@ -100,16 +104,23 @@ const Landing = () => {
                                  text-[#F0B90B]  transition duration-300
                                  px-4 py-1.5 rounded-full w-fit">
                                     <Zap className="w-4 h-4"/>
-                                    <span>The Future of Token Trading</span>
+                                    <span>The Future of Digital Asset Trading</span>
                                 </div>
 
-                                <h1 className="text-4xl pacifico md:text-5xl lg:text-6xl font-bold text-[#FFFFFF] leading-tight">
-                                    Secure Token <span className="text-[#F0B90B]">Escrow</span>
-                                </h1>
+                                <div>
+                                    <h1 className="text-4xl pacifico md:text-5xl lg:text-6xl font-bold text-[#FFFFFF] leading-tight">
+                                        Secure Escrow
+                                    </h1>
+                                    <span className="bg-white text-[#0c0219] px-4 py-1 -mt-10">
+                                        <span className="pacifico">
+                                            for {' '}
+                                        </span>
+                                        Crypto, Social Accounts, Domains & More
+                                    </span>
+                                </div>
 
                                 <p className="text-xl text-[#B7BDC6] leading-relaxed max-w-2xl mx-auto">
-                                    Trade tokens safely with smart contract escrow. Your funds are protected until both
-                                    parties confirm the exchange.
+                                    Buy and sell digital assets with confidence. Our smart escrow system locks funds until both parties fulfill the deal — protecting you from scams, chargebacks, and fraud. Fast, neutral, and KYC-free.
                                 </p>
                             </div>
 

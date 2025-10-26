@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
+import Image from "next/image";
 import {
     Mail,
     Phone,
@@ -19,7 +20,7 @@ import {
     Cookie,
     AlertTriangle,
     Globe,
-    ChevronDown, Eclipse
+    ChevronDown
 } from 'lucide-react';
 
 const Footer = () => {
@@ -85,12 +86,18 @@ const Footer = () => {
                         }`} style={{ transitionDelay: '200ms' }}>
                             <div className="flex items-center gap-3 mb-6 group cursor-pointer">
                                 <div className="relative">
-                                    <div className="w-10 h-10 bg-[#F0B90B] rounded-xl flex items-center justify-center">
-                                        <Eclipse className="w-6 h-6 text-[#0B0E11]" />
+                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
+                                        <Image
+                                            src="/logo/logo.png"
+                                            alt="SafeSwap Logo"
+                                            width={40}
+                                            height={40}
+                                            className="object-contain"
+                                        />
                                     </div>
                                 </div>
                                 <span className="text-2xl font-bold text-[#F0B90B]">
-                                    SafeSwap
+                                    Thraqs
                                 </span>
                             </div>
                             <p className="text-[#B7BDC6] mb-6 leading-relaxed">
@@ -179,7 +186,7 @@ const Footer = () => {
                         }`} style={{ transitionDelay: '1000ms' }}>
                             <div className="text-[#B7BDC6] text-sm text-center md:text-left">
                                 <p className="flex items-center gap-2">
-                                    &copy; {year} SafeSwap. All rights reserved. Trade safely!
+                                    &copy; {year} Thraqs. All rights reserved. Trade safely!
                                     <Shield className="w-4 h-4 text-[#F0B90B]" />
                                 </p>
                             </div>
